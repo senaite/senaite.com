@@ -1,0 +1,29 @@
+<div class="footer">
+  <div class="container">
+    <div class="col-md-6">
+      {{ partial "logo.html" . }}
+      <p>
+        A technology startup based somewhere in the world. <br class="hidden-xs"> making the finest bluetooth
+        speakers ever made. <br class="hidden-xs"> You'll know our location if you really love us.
+      </p>
+
+      <div class="footer-text">
+        <p>
+          Copyright © 2017-{{ .Now.Year }} {{ .Site.Params.copyright }}
+        </p>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div id="contact" class="contact text-center">
+        <i class="ion-ios-chatboxes-outline"></i>
+        <h1>Need Help ?</h1>
+        <p>
+          Contact our 24/7 customer support if you have any <br class="hidden-xs"> questions. We'll help you out.
+        </p>
+        <a href="mailto:{{ .Site.Params.mailto }}">{{ .Site.Params.mailto }}</a>
+      </div>
+    </div>
+
+  </div>
+</div>

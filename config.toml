@@ -1,0 +1,52 @@
+# Main Site settings *** ENGLISH ***
+
+baseURL = "http://senaite.com/"
+languageCode = "en"
+title = "SENAITE LIMS"
+theme = "senaite"
+
+[params]
+  description = "SENAITE LIMS Landing Page"
+  mailto = "senaite@senaite.com"
+  copyright = "SNAITE Foundation."
+
+    # navigation (see partials/navigation.html)
+    [params.navbar]
+
+        [[params.navbar.list]]
+            title = "SENAITE"
+            href = "#main"
+
+        [[params.navbar.list]]
+            title = "Features"
+            href = "#features"
+
+        [[params.navbar.list]]
+            title = "Team"
+            href = "#team"
+
+        [[params.navbar.list]]
+            title = "Contact"
+            href = "#contact"
+
+    [params.team]
+
+        [[params.team.list]]
+            name = "Ramon Bartl"
+            role = "Founder of the SENAITE Project, API and Frontend Specialist"
+            portrait = "https://github.com/ramonski.png?s=50"
+
+        [[params.team.list]]
+            name = "Campbell MC Kellar-Basset"
+            role = "Bika LIMS Guru, Backend Developer, Explorer"
+            portrait = "https://github.com/rockfruit.png?s=50"
+
+        [[params.team.list]]
+            name = "Mike Metcalfe"
+            role = "Backend Specialist"
+            portrait = "https://github.com/mikejmets.png?s=50"
+
+        [[params.team.list]]
+            name = "Lunga Baliwe"
+            role = "Backend Specialist"
+            portrait = "https://github.com/Lunga001.png?s=50"

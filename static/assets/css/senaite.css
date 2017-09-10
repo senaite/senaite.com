@@ -1,0 +1,16 @@
+.features .features-inner {
+}
+
+.product .feature-sub {
+    background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(146, 127, 84, 0.99));
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    padding: 150px 0 150px 0;
+}
+
+.team {
+    padding: 150px 0 150px 0;
+    text-align: center;
+    background: #F4F4F4;
+}

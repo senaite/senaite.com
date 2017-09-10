@@ -1,0 +1,33 @@
+<div class="footer">
+  <div class="container">
+    <div class="col-md-6">
+      {{ partial "logo.html" . }}
+      <p>
+        <a href="http://senaite.com">SENAITE</a> is a beautiful trigonal,
+        oil-green to greenish black <a href="https://www.mindat.org/min-3617.html">crystal</a>,
+        with almost the hardness of a diamond. Although the crystal is described with a complex
+        formula, it still has clear and straight shapes. Therefore, it reflects
+        nicely the complexity of the LIMS, while providing a modern, intuitive
+        and friendly <a href="https://en.wikipedia.org/wiki/User_interface_design">UI</a>/<a href="https://en.wikipedia.org/wiki/User_experience">UX</a>.
+      </p>
+
+      <div class="footer-text">
+        <p>
+          Copyright © 2017-{{ .Now.Year }} {{ .Site.Params.copyright }}
+        </p>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div id="contact" class="contact text-center">
+        <i class="ion-ios-chatboxes-outline"></i>
+        <h1>Need Help?</h1>
+        <p>
+          Join our Chatroom or write into the mailing list.
+        </p>
+        <!-- <a href="mailto:{{ .Site.Params.mailto }}">{{ .Site.Params.mailto }}</a> -->
+      </div>
+    </div>
+
+  </div>
+</div>

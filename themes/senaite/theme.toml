@@ -1,0 +1,18 @@
+name = "SENAITE"
+license = "Proprietary"
+description = "SENAITE LIMS Theme"
+homepage = "http://senaite.com/"
+tags = []
+features = []
+min_version = "0.26"
+
+[author]
+  name = "Ramon Bartl"
+  homepage = "http://ridingbytes.com"
+
+# If porting an existing theme
+[original]
+  name = "Advent Landing Page HTML Template"
+  homepage = "https://wrapbootstrap.com/theme/advent-multipurpose-landing-page-WB0LB7F49"
+  license = "Proprietary"
+  license-id = "4baa1191-9ba3-4982-867b-51b2e226c6cd"
