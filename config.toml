@@ -21,9 +21,9 @@ theme = "senaite"
             title = "Features"
             href = "#features"
 
-        [[params.navbar.list]]
-            title = "Team"
-            href = "#team"
+        #[[params.navbar.list]]
+        #    title = "Team"
+        #    href = "#team"
 
         [[params.navbar.list]]
             title = "Contact"
