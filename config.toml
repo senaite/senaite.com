@@ -9,7 +9,7 @@ theme = "senaite"
   name="SENAITE Foundation"
   description = "SENAITE - Next Generation LIMS"
   mailto = "senaite@senaite.com"
-  copyright = "SNAITE Foundation."
+  copyright = "SENAITE Foundation."
 
     # navigation (see partials/navigation.html)
     [params.navbar]
