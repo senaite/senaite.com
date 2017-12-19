@@ -1991,6 +1991,10 @@ input[type="text"]::-webkit-input-placeholder, textarea::-webkit-input-placehold
 	color: #927f54;
 }
 
+.providers.contact h1 {
+	 color: #927f54;
+}
+
 
 /* -------------------------------------------------------
 ----------- Bact-to-Top Styling Starts Here --------------

@@ -22,13 +22,31 @@ theme = "senaite"
             title = "Features"
             href = "#features"
 
-        #[[params.navbar.list]]
-        #    title = "Team"
-        #    href = "#team"
+        [[params.navbar.list]]
+           title = "Service Providers"
+           href = "#providers"
 
         [[params.navbar.list]]
             title = "Contact"
             href = "#contact"
+
+    [params.providers]
+
+        [[params.providers.list]]
+            name = "RIDING BYTES"
+            url = "http://ridingbytes.com"
+            mail = "hello@ridingbytes.com"
+            logo = "assets/logos/ridingbytes.png"
+            slogan = "Professional Open Source Solutions"
+            location = "Germany"
+
+        [[params.providers.list]]
+            name = "NARALABS"
+            url = "https://naralabs.com"
+            mail = "info@naralabs.com"
+            logo = "assets/logos/naralabs.png"
+            slogan = "LIMS Engineering and Consulting"
+            location = "Barcelona"
 
     [params.team]
 
