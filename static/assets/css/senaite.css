@@ -20,6 +20,9 @@
     color: white;
     border-color: white;
 }
+.footer p, .footer a {
+    color: #A1A1A1;
+}
 
 .product .feature-sub {
     background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(146, 127, 84, 0.99));
