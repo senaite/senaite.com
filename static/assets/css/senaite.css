@@ -5,14 +5,14 @@
     background: linear-gradient(to right, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.1)),
                 url(../images/bg.jpg) no-repeat center center;
 }
-.product h1 {
+#product h1 {
     font-weight: 500;
     color: white;
 }
-.product p {
+#product p {
     color: white;
 }
-.product a {
+#product a {
     color: white;
     font-weight: bold;
 }
@@ -22,6 +22,9 @@
 }
 .footer p, .footer a {
     color: #A1A1A1;
+}
+.providers {
+    color: black;
 }
 
 .product .feature-sub {
