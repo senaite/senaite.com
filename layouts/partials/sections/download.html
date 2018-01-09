@@ -1,0 +1,63 @@
+{{ with .Site.Params.download }}
+
+<div id="download" class="app-features text-center">
+  <div class="container">
+    <h1 class="wow fadeInDown" data-wow-delay="0.1s">
+      Download Center
+    </h1>
+    <p class="wow fadeInDown" data-wow-delay="0.2s">
+      The SENAITE VM provides a key-turn ready <a href="https://pypi.python.org/pypi/senaite.core">SENAITE</a>
+      Server for <a href="https://www.virtualbox.org/">VirtualBox</a>.
+    </p>
+
+    <div class="col-md-4 features-left">
+      <div class="col-md-12 wow fadeInDown" data-wow-delay="0.2s">
+        <div class="icon">
+          <a href="{{ .pdf }}">
+            <i class="ion-document"></i>
+          </a>
+        </div>
+        <div class="feature-single">
+          <h1>Documentation</h1>
+          <p>
+            <a href="{{ .pdf }}">
+              Download the VM Documentation
+            </a>
+          </p>
+          <p>
+            Portable Document Format (PDF)
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 wow fadeInDown" data-wow-delay="0.5s">
+      <img class="img-responsive" src="assets/images/SENAITE_VM.png" alt="SENAITE VM" />
+    </div>
+
+    <div class="col-md-4 features-left">
+      <div class="col-md-12 wow fadeInDown" data-wow-delay="0.6s">
+        <div class="icon">
+          <a href="{{ .vm }}">
+            <i class="ion-cube"></i>
+          </a>
+        </div>
+        <div class="feature-single">
+          <h1>
+            SENAITE VM
+          </h1>
+          <p>
+            <a href="{{ .vm }}">
+              Download the SENAITE VM
+            </a>
+          </p>
+          <p>
+             OVA (Open Virtual Appliance)
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{{ end }}

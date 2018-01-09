@@ -6,10 +6,10 @@ title = "SENAITE LIMS"
 theme = "senaite"
 
 [params]
-  name="SENAITE Foundation"
-  description = "SENAITE - Next Generation LIMS"
-  mailto = "senaite@senaite.com"
-  copyright = "SENAITE Foundation."
+    name="SENAITE Foundation"
+    description = "SENAITE - Next Generation LIMS"
+    mailto = "senaite@senaite.com"
+    copyright = "SENAITE Foundation."
 
     # navigation (see partials/navigation.html)
     [params.navbar]
@@ -25,6 +25,10 @@ theme = "senaite"
         [[params.navbar.list]]
            title = "Service Providers"
            href = "#providers"
+
+        [[params.navbar.list]]
+            title = "Download"
+            href = "#download"
 
         [[params.navbar.list]]
             title = "Contact"
@@ -69,3 +73,8 @@ theme = "senaite"
             name = "Lunga Baliwe"
             role = "Backend Specialist"
             portrait = "https://github.com/Lunga001.png?s=50"
+
+
+    [params.download]
+        pdf = "https://www.dropbox.com/s/6lrvh2eatkkmmdb/SENAITE%20VM.pdf?dl=1"
+        vm = "https://www.dropbox.com/s/qjhpm0nwspt1vfp/SENAITE%20VM.ova?dl=1"
