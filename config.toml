@@ -78,5 +78,5 @@ theme = "senaite"
     [params.download]
         # pdf = "https://www.dropbox.com/s/6lrvh2eatkkmmdb/SENAITE%20VM.pdf?dl=1"
         # vm = "https://www.dropbox.com/s/qjhpm0nwspt1vfp/SENAITE%20VM.ova?dl=1"
-        pdf = "https://downloads.senaite.org/SENAITE%20VM.pdf"
-        vm = "https://downloads.senaite.org/SENAITE%20VM.ova"
+        pdf = "https://downloads.senaite.com/SENAITE%20VM.pdf"
+        vm = "https://downloads.senaite.com/SENAITE%20VM.ova"
