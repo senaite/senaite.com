@@ -23,12 +23,12 @@ theme = "senaite"
             href = "#features"
 
         [[params.navbar.list]]
-           title = "Service Providers"
-           href = "#providers"
-
-        [[params.navbar.list]]
             title = "Download"
             href = "#download"
+
+        [[params.navbar.list]]
+           title = "Service Providers"
+           href = "#providers"
 
         [[params.navbar.list]]
             title = "Contact"
@@ -76,5 +76,7 @@ theme = "senaite"
 
 
     [params.download]
-        pdf = "https://www.dropbox.com/s/6lrvh2eatkkmmdb/SENAITE%20VM.pdf?dl=1"
-        vm = "https://www.dropbox.com/s/qjhpm0nwspt1vfp/SENAITE%20VM.ova?dl=1"
+        # pdf = "https://www.dropbox.com/s/6lrvh2eatkkmmdb/SENAITE%20VM.pdf?dl=1"
+        # vm = "https://www.dropbox.com/s/qjhpm0nwspt1vfp/SENAITE%20VM.ova?dl=1"
+        pdf = "https://senaite.org/downloads/SENAITE%20VM.pdf"
+        vm = "https://senaite.org/downloads/SENAITE%20VM.ova"
