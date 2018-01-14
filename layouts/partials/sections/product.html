@@ -13,21 +13,24 @@
 
         <div class="sub-form wow fadeInUp" data-wow-delay="0.3s">
           <form id="subscribe"
-                class="formee"
+                class="formee form-inline"
                 action="https://sourceforge.net/projects/senaite/lists/senaite-users"
                 method="GET">
-            <input name="email" id="email" type="text"/>
-            <input class="right inputnew" type="submit" title="Send" value="Subscribe to SENAITE User List"/>
+            <div class="form-group">
+              <input name="email" id="email" type="text" class="form-control" />
+            </div>
+            <input class="right inputnew form-control" type="submit" title="Send" value="Subscribe to SENAITE User List"/>
           </form>
           <div id="response"></div>
         </div>
 
-        <a class="btn btn-primary btn-action popup wow fadeInUp"
-           data-wow-delay="0.4s"
-           target="_blank"
-           href="https://github.com/senaite">
-          Visit the GitHub Project Page
+        <a class="btn btn-default btn-action popup wow fadeInUp"
+          data-wow-delay="0.4s"
+          target="_blank"
+          href="https://github.com/senaite">
+          Visit the Project Page
         </a>
+
       </div>
     </div>
   </div>
