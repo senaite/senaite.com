@@ -4,6 +4,7 @@ baseURL = "http://www.senaite.com/"
 languageCode = "en"
 title = "SENAITE LIMS"
 theme = "senaite"
+publishDir = "../senaite.github.io"
 
 [params]
     name="SENAITE Foundation"

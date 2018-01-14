@@ -15,7 +15,7 @@ echo -e "\033[0;32mDeploying $PAGE to GitHub...\033[0m"
 cd $PROJECT_DIR
 
 # Build the project.
-$HUGO --destination=$BUILD_DIR
+$HUGO --destination=$BUILD_DIR --cleanDestinationDir
 
 
 # Go To Public folder
