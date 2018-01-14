@@ -5,6 +5,7 @@ languageCode = "en"
 title = "SENAITE LIMS"
 theme = "senaite"
 publishDir = "../senaite.github.io"
+cleanDestinationDir = "True"
 
 [params]
     name="SENAITE Foundation"
