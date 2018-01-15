@@ -51,7 +51,7 @@ cleanDestinationDir = "True"
             url = "https://naralabs.com"
             mail = "info@naralabs.com"
             logo = "assets/logos/naralabs.png"
-            slogan = "LIMS Engineering and Consulting"
+            slogan = ""
             location = "Barcelona"
 
     [params.team]
