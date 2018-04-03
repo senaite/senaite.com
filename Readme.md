@@ -36,7 +36,7 @@ Change to the `senaite.com` repository:
 
 Run a local server on http://localhost:1313:
 
-    hugo serve
+    hugo server -D
 
 
 ## Deployment
@@ -48,6 +48,19 @@ Change to the `senaite.com` repository:
 Execute the `deploy` script:
 
    bin/deploy
+
+
+## Troubleshooting
+
+Command:
+
+    senaite.com (master*) » hugo server -D                                                                                                                                                                                              ~/develop/ridingbytes/senaite/senaite.com
+    Building sites … ERROR 2018/04/03 10:10:42 Failed to read data from empty/empty: Data not supported for extension ''
+    Total in 38 ms
+    Error: Error building site: logged 1 error(s)
+
+One or more of the version controlled directories contains an file called `empty`. Remove it and re-run the command.
+
 
 ---
 **Note:** This will build the website to the folder `../senaite.githup.io`,
