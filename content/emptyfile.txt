@@ -1,0 +1,1 @@
+This file is needed because "content" folder must be available to run "hugo server -D" command, but Git Hub does not allow uploading empty folders.
