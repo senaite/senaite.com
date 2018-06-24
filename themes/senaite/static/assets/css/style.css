@@ -466,6 +466,12 @@ p {
  color: #82714a;
 }
 
+.product .btn-action.stress {
+ background-color: #927f54;
+ border: 1px solid #FFFFFF;
+ color: #82714a;
+}
+
 .product .btn-action:hover, .product  .btn-action:focus {
  background: #92714A;
  color: #FFFFFF;
