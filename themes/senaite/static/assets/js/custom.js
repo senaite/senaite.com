@@ -66,6 +66,16 @@ jQuery(function($) {
     pagination : false
     });
 
+  /*--------About sentences Owl Carousel ---------- */
+    $(".about-content").owlCarousel({
+
+    slideSpeed : 300,
+    items: 1,
+    singleItem: true,
+    autoPlay : true,
+    pagination : false
+    });
+
 
   /* ------ Clients Section Owl Carousel ----- */
 
