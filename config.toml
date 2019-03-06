@@ -24,9 +24,9 @@ cleanDestinationDir = "True"
             title = "Features"
             href = "#features"
 
-        [[params.navbar.list]]
-            title = "Download"
-            href = "#download"
+        # [[params.navbar.list]]
+        #     title = "Download"
+        #     href = "#download"
 
         [[params.navbar.list]]
            title = "Service Providers"
