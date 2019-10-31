@@ -1,3 +1,8 @@
+# This Repository has been archived
+
+This Repository has been archived and superseeded by https://github.com/senaite/senaite2.com
+
+
 # SENAITE Website
 
 The SENAITE Website is based on the
