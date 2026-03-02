@@ -27,7 +27,7 @@ jobs:
       - name: Deploy to senaite.github.io
         uses: peaceiris/actions-gh-pages@v4
         with:
-          deploy_key: ${{ secrets.DEPLOY_KEY }}
+          personal_token: ${{ secrets.PERSONAL_TOKEN }}
           external_repository: senaite/senaite.github.io
           publish_branch: master
           publish_dir: ./build
