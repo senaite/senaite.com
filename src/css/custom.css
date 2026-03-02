@@ -50,9 +50,18 @@
   --ifm-color-primary-lighter: #d3c09b;
   --ifm-color-primary-lightest: #e0d3b7;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+
+  /* SENAITE dark-mode brand tokens */
   --senaite-surface: #1e2626;
   --senaite-border: #2e3c3c;
   --senaite-muted: #8a9a9a;
+  --senaite-text: #edf2f2;
+
+  /* Navbar */
+  --ifm-navbar-background-color: #1a2020;
+  --ifm-navbar-link-color: #d4dada;
+  --ifm-navbar-link-hover-color: var(--senaite-gold);
+  --ifm-navbar-shadow: 0 1px 0 0 var(--senaite-border);
 }
 
 /* Navbar */
@@ -105,6 +114,18 @@
   --ifm-button-color: var(--senaite-dark);
   --ifm-button-border-color: #8a9a9a;
   text-decoration: none;
+}
+
+[data-theme="dark"] .button--secondary {
+  --ifm-button-color: #d4dada;
+  --ifm-button-border-color: #4a5a5a;
+}
+
+[data-theme="dark"] .button--secondary:hover,
+[data-theme="dark"] .button--secondary:focus {
+  --ifm-button-background-color: rgba(255, 255, 255, 0.07);
+  --ifm-button-color: #edf2f2;
+  --ifm-button-border-color: #6a8080;
 }
 
 /* -------------------------------------------------------
