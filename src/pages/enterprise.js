@@ -29,10 +29,11 @@ const PROVIDERS = [
     tagline: "Open Source LIMS Specialists",
     url: "https://naralabs.com",
     description:
-      "Spain-based company and active co-maintainer of SENAITE."
-      + " Nara Labs contributes core development and supports"
-      + " laboratories in Southern Europe and Latin America with"
-      + " implementation, training and long-term support.",
+      "Spain-based software company and primary maintainer of"
+      + " the SENAITE platform. Nara Labs leads core development"
+      + " and supports laboratories in Southern Europe and Latin"
+      + " America with implementation, training and long-term"
+      + " support.",
   },
   {
     tier: 2,
