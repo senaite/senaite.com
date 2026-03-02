@@ -17,7 +17,7 @@ const PROVIDERS = [
     tagline: "Professional Open Source Solutions",
     url: "https://www.ridingbytes.com",
     description:
-      "Germany-based software company and the primary maintainer of"
+      "Germany-based software company and core maintainer of"
       + " the SENAITE platform. RIDING BYTES leads core development,"
       + " publishes every major release and has driven SENAITE"
       + " implementations across Europe and Africa.",
@@ -29,11 +29,11 @@ const PROVIDERS = [
     tagline: "Open Source LIMS Specialists",
     url: "https://naralabs.com",
     description:
-      "Spain-based software company and primary maintainer of"
-      + " the SENAITE platform. Nara Labs leads core development"
-      + " and supports laboratories in Southern Europe and Latin"
-      + " America with implementation, training and long-term"
-      + " support.",
+      "Spain-based software company and core maintainer of"
+      + " the SENAITE platform. Nara Labs contributes core"
+      + " development and supports laboratories in Southern"
+      + " Europe and Latin America with implementation, training"
+      + " and long-term support.",
   },
   {
     tier: 2,
