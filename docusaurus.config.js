@@ -128,7 +128,7 @@ const config = {
                 href: "https://www.ridingbytes.com",
               },
               {
-                label: "Nara Labs",
+                label: "NARALABS",
                 href: "https://naralabs.com",
               },
               {

@@ -24,13 +24,13 @@ const PROVIDERS = [
   },
   {
     tier: 1,
-    name: "Nara Labs",
+    name: "NARALABS",
     logo: "/img/naralabs.png",
     tagline: "Open Source LIMS Specialists",
     url: "https://naralabs.com",
     description:
       "Spain-based software company and core maintainer of"
-      + " the SENAITE platform. Nara Labs contributes core"
+      + " the SENAITE platform. NARALABS contributes core"
       + " development and supports laboratories in Southern"
       + " Europe and Latin America with implementation, training"
       + " and long-term support.",
@@ -252,7 +252,7 @@ export default function Enterprise() {
               rel="noopener noreferrer"
               className="button button--primary button--lg"
             >
-              Contact Nara Labs
+              Contact NARALABS
             </a>
             <a
               href="https://yme.rocks/en"
