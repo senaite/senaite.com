@@ -135,7 +135,7 @@ eggs =
     ${buildout:eggs}
 
 [versions]
-senaite.lims = 2.5.0
+senaite.lims = 2.6.0
 et-xmlfile = 1.1.0
 ```
 
