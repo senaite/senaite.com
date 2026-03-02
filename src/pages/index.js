@@ -190,7 +190,7 @@ function HeroBanner() {
     <header className={styles.hero}>
       <div className="container">
         <img
-          src="/img/senaite_product_logo.svg"
+          src="/img/senaite_product_logo_text.svg"
           alt="SENAITE"
           className={styles.heroLogo}
         />

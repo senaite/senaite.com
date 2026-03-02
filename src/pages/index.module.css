@@ -1,19 +1,22 @@
-/* Hero banner — light, clean */
+/* Hero banner */
 .hero {
-  background: #fff;
+  background: var(--senaite-surface);
   text-align: center;
   padding: 6rem 1rem 5rem;
   border-bottom: 1px solid var(--senaite-border);
-}
-
-[data-theme="dark"] .hero {
-  background: var(--ifm-background-color);
 }
 
 .heroLogo {
   width: 300px;
   max-width: 75%;
   margin-bottom: 2rem;
+  /* SVG has light fills; invert to dark for the white hero background */
+  filter: invert(1);
+}
+
+[data-theme="dark"] .heroLogo {
+  /* Original light fills read correctly on the dark hero background */
+  filter: none;
 }
 
 .heroTagline {

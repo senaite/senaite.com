@@ -128,7 +128,7 @@ export default function Features() {
 
       <main>
         {/* Feature grid */}
-        <section className="senaite-section senaite-section--grey">
+        <section className="senaite-section">
           <div className="container">
             <div className="senaite-section__header">
               <h2 className="senaite-section__title">

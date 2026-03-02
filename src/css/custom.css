@@ -69,6 +69,19 @@
   height: 26px;
 }
 
+/*
+ * The navbar logo SVG uses light fills (#d7dbdc) intended for dark
+ * backgrounds. Invert it in light mode so it reads on the white navbar.
+ * In dark mode the original light fills work correctly as-is.
+ */
+.navbar__logo img {
+  filter: invert(1);
+}
+
+[data-theme="dark"] .navbar__logo img {
+  filter: none;
+}
+
 .navbar__link--active {
   color: var(--senaite-gold) !important;
   font-weight: 500;
@@ -102,9 +115,14 @@
   text-decoration: none;
 }
 
+[data-theme="dark"] .button--primary {
+  --ifm-button-color: var(--ifm-color-primary);
+  --ifm-button-border-color: var(--ifm-color-primary);
+}
+
 [data-theme="dark"] .button--primary:hover,
 [data-theme="dark"] .button--primary:focus {
-  --ifm-button-background-color: var(--senaite-gold);
+  --ifm-button-background-color: var(--ifm-color-primary);
   --ifm-button-color: #fff;
   text-decoration: none;
 }
@@ -124,15 +142,19 @@
 }
 
 [data-theme="dark"] .button--secondary {
-  --ifm-button-color: #d4dada;
-  --ifm-button-border-color: #4a5a5a;
+  --ifm-button-color: #c8d4d4;
+  --ifm-button-border-color: #7a9090;
+  color: #c8d4d4;
+  border-color: #7a9090;
 }
 
 [data-theme="dark"] .button--secondary:hover,
 [data-theme="dark"] .button--secondary:focus {
-  --ifm-button-background-color: rgba(255, 255, 255, 0.07);
+  --ifm-button-background-color: rgba(255, 255, 255, 0.08);
   --ifm-button-color: #edf2f2;
-  --ifm-button-border-color: #6a8080;
+  --ifm-button-border-color: #9ab0b0;
+  color: #edf2f2;
+  border-color: #9ab0b0;
 }
 
 /* -------------------------------------------------------
