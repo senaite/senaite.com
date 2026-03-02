@@ -1,0 +1,115 @@
+/* Page hero — light */
+.hero {
+  background: var(--senaite-surface);
+  text-align: center;
+  padding: 4rem 1rem 3.5rem;
+  border-bottom: 1px solid var(--senaite-border);
+}
+
+.hero h1 {
+  color: var(--senaite-text);
+  font-weight: 300;
+  font-size: 2.8rem;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  color: var(--senaite-muted);
+}
+
+/* Tier labels */
+.tierLabel {
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--senaite-gold);
+  margin-bottom: 1.5rem;
+}
+
+.tierLabelSpaced {
+  margin-top: 3rem;
+}
+
+/* Tier 2 partner grid — narrower, centred */
+.partnerGrid {
+  display: flex;
+  justify-content: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+}
+
+/* Compact card variant for tier 2 */
+.providerCardCompact {
+  max-width: 300px;
+  padding: 1.75rem 1.5rem;
+  border-top-color: var(--senaite-border) !important;
+  opacity: 0.85;
+}
+
+.providerCardCompact:hover {
+  opacity: 1;
+}
+
+/* Provider cards */
+.providerCard {
+  /* border and transition defined in global provider-card */
+}
+
+.providerTagline {
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--senaite-gold);
+  margin-bottom: 1rem;
+}
+
+.providerDescription {
+  font-size: 0.95rem;
+  color: var(--senaite-muted);
+  line-height: 1.65;
+  margin-bottom: 1.5rem;
+}
+
+[data-theme="dark"] .providerDescription {
+  color: #8a9a9a;
+}
+
+/* Why cards */
+.whyCard {
+  text-align: center;
+  padding: 1rem 1.25rem;
+  margin-bottom: 2.5rem;
+}
+
+.whyIcon {
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.whyIcon img {
+  max-height: 80px;
+  max-width: 100%;
+  opacity: 0.8;
+}
+
+/* Implementation cards */
+.implCard {
+  text-align: center;
+  padding: 1rem 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.implIcon {
+  height: 88px;
+  max-width: 100%;
+  margin-bottom: 1.25rem;
+  opacity: 0.8;
+}

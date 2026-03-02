@@ -1,0 +1,6 @@
+services:
+  docusaurus:
+    image: ghcr.io/senaite/senaite3.com:latest
+    restart: unless-stopped
+    ports:
+      - "3000:80"

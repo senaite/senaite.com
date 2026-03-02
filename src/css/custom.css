@@ -1,0 +1,419 @@
+/**
+ * SENAITE brand colors and global overrides for Docusaurus.
+ *
+ * Primary accent: #927f54 (gold)
+ * Dark:           #293333
+ * Surface:        #f8f8f8
+ */
+
+:root {
+  --ifm-color-primary: #927f54;
+  --ifm-color-primary-dark: #846e45;
+  --ifm-color-primary-darker: #7e6840;
+  --ifm-color-primary-darkest: #685534;
+  --ifm-color-primary-light: #a08e64;
+  --ifm-color-primary-lighter: #a6946a;
+  --ifm-color-primary-lightest: #b9aa88;
+
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.07);
+
+  /* SENAITE brand tokens */
+  --senaite-dark: #293333;
+  --senaite-gold: #927f54;
+  --senaite-surface: #f8f8f8;
+  --senaite-border: #e8e8e8;
+  --senaite-text: #1c2424;
+  --senaite-muted: #666;
+
+  /* Navbar — white, clean */
+  --ifm-navbar-background-color: #ffffff;
+  --ifm-navbar-link-color: var(--senaite-dark);
+  --ifm-navbar-link-hover-color: var(--senaite-gold);
+  --ifm-navbar-shadow: 0 1px 0 0 var(--senaite-border);
+
+  /* Global type scale */
+  --ifm-font-size-base: 17px;
+  --ifm-line-height-base: 1.7;
+  --ifm-heading-font-weight: 300;
+  --ifm-h1-font-size: 3rem;
+  --ifm-h2-font-size: 2.4rem;
+  --ifm-h3-font-size: 1.25rem;
+}
+
+[data-theme="dark"] {
+  --ifm-color-primary: #c4ab7a;
+  --ifm-color-primary-dark: #b89a61;
+  --ifm-color-primary-darker: #b19357;
+  --ifm-color-primary-darkest: #967b42;
+  --ifm-color-primary-light: #ceba93;
+  --ifm-color-primary-lighter: #d3c09b;
+  --ifm-color-primary-lightest: #e0d3b7;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --senaite-surface: #1e2626;
+  --senaite-border: #2e3c3c;
+  --senaite-muted: #8a9a9a;
+}
+
+/* Navbar */
+.navbar__logo {
+  height: 26px;
+}
+
+.navbar__link--active {
+  color: var(--senaite-gold) !important;
+  font-weight: 500;
+}
+
+/* Docs — tighten the sidebar slightly */
+.menu__link {
+  font-size: 0.9rem;
+}
+
+/* -------------------------------------------------------
+   Buttons — outline style globally via Infima CSS props
+------------------------------------------------------- */
+.button {
+  border-radius: 3px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.button--primary {
+  --ifm-button-background-color: transparent;
+  --ifm-button-color: var(--senaite-gold);
+  --ifm-button-border-color: var(--senaite-gold);
+}
+
+.button--primary:hover,
+.button--primary:focus {
+  --ifm-button-background-color: rgba(146, 127, 84, 0.1);
+  --ifm-button-color: var(--senaite-gold);
+  text-decoration: none;
+}
+
+.button--secondary {
+  --ifm-button-background-color: transparent;
+  --ifm-button-color: var(--senaite-dark);
+  --ifm-button-border-color: #b0b8b8;
+}
+
+.button--secondary:hover,
+.button--secondary:focus {
+  --ifm-button-background-color: rgba(41, 51, 51, 0.06);
+  --ifm-button-color: var(--senaite-dark);
+  --ifm-button-border-color: #8a9a9a;
+  text-decoration: none;
+}
+
+/* -------------------------------------------------------
+   Section layout
+------------------------------------------------------- */
+.senaite-section {
+  padding: 5.5rem 0;
+}
+
+.senaite-section--grey {
+  background: var(--senaite-surface);
+}
+
+.senaite-section--dark {
+  background: var(--senaite-dark);
+  color: #fff;
+}
+
+.senaite-section__header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
+.senaite-section__title {
+  font-size: 2.6rem;
+  font-weight: 300;
+  color: var(--senaite-text);
+  margin-bottom: 0;
+  letter-spacing: -0.02em;
+}
+
+/* Gold rule under every section title */
+.senaite-section__title::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 2px;
+  background: var(--senaite-gold);
+  margin: 1rem auto 0;
+}
+
+[data-theme="dark"] .senaite-section__title {
+  color: #edf2f2;
+}
+
+.senaite-section__subtitle {
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: var(--senaite-muted);
+  margin-top: 1.25rem;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+[data-theme="dark"] .senaite-section__subtitle {
+  color: #8a9a9a;
+}
+
+/* -------------------------------------------------------
+   Feature cards (homepage performance / control /
+   technology / open source sections)
+------------------------------------------------------- */
+.feature-card {
+  padding: 1.25rem 1.5rem;
+  text-align: center;
+}
+
+.feature-card__icon {
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.feature-card__icon img {
+  max-height: 80px;
+  max-width: 100%;
+  opacity: 0.85;
+}
+
+.feature-card__title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--senaite-text);
+  margin-bottom: 0.5rem;
+}
+
+/* -------------------------------------------------------
+   Feature detail blocks
+------------------------------------------------------- */
+.feature-block {
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+  padding: 2.5rem 0;
+}
+
+.feature-block--reverse {
+  flex-direction: row-reverse;
+}
+
+.feature-block__content {
+  flex: 1;
+}
+
+.feature-block__content h3 {
+  font-size: 1.6rem;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  margin-bottom: 1rem;
+  color: var(--senaite-text);
+}
+
+.feature-block__image {
+  flex: 1;
+  text-align: center;
+}
+
+.feature-block__image img {
+  max-width: 100%;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1),
+              0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+@media (max-width: 768px) {
+  .feature-block {
+    flex-direction: column !important;
+    gap: 2rem;
+  }
+}
+
+/* -------------------------------------------------------
+   Provider cards
+------------------------------------------------------- */
+.provider-grid {
+  display: flex;
+  justify-content: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+  margin: 1.5rem 0;
+}
+
+.provider-card {
+  text-align: center;
+  padding: 2.5rem 2rem;
+  background: #fff;
+  border: 1px solid var(--senaite-border);
+  border-top: 3px solid var(--senaite-gold);
+  border-radius: 4px;
+  min-width: 280px;
+  max-width: 360px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.provider-card:hover {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+}
+
+[data-theme="dark"] .provider-card {
+  background: var(--ifm-background-surface-color);
+  border-color: var(--senaite-border);
+}
+
+.provider-card__logo {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.provider-card__logo img {
+  max-height: 56px;
+  max-width: 200px;
+}
+
+/* -------------------------------------------------------
+   Timeline
+------------------------------------------------------- */
+.timeline {
+  position: relative;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0.5rem 0;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 24px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--senaite-border);
+}
+
+.timeline-item {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+
+.timeline-item__number {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--senaite-gold);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 500;
+  z-index: 1;
+}
+
+.timeline-item__body {
+  flex: 1;
+  padding-top: 0.6rem;
+}
+
+.timeline-item__title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  color: var(--senaite-text);
+}
+
+[data-theme="dark"] .timeline-item__title {
+  color: #edf2f2;
+}
+
+.timeline-item__content {
+  font-size: 0.95rem;
+  color: var(--senaite-muted);
+  line-height: 1.65;
+}
+
+/* -------------------------------------------------------
+   Trusted by logos
+------------------------------------------------------- */
+.trusted-logos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+  margin-top: 2rem;
+}
+
+.trusted-logos a,
+.trusted-logos span {
+  opacity: 0.55;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.trusted-logos a:hover {
+  opacity: 1;
+}
+
+.trusted-logos img {
+  max-height: 44px;
+  max-width: 130px;
+  filter: grayscale(100%);
+  transition: filter 0.2s;
+}
+
+.trusted-logos a:hover img {
+  filter: grayscale(0%);
+}
+
+/* -------------------------------------------------------
+   CTA banner
+------------------------------------------------------- */
+.cta-banner {
+  background: var(--senaite-surface);
+  border-top: 1px solid var(--senaite-border);
+  text-align: center;
+  padding: 5rem 1rem;
+}
+
+.cta-banner__title {
+  font-size: 2.2rem;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+  color: var(--senaite-text);
+}
+
+.cta-banner__subtitle {
+  font-size: 1.1rem;
+  color: var(--senaite-muted);
+  margin-bottom: 2rem;
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta-banner__buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
