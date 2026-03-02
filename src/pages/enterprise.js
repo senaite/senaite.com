@@ -249,7 +249,7 @@ export default function Enterprise() {
               href="https://naralabs.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="button button--secondary button--lg"
+              className="button button--primary button--lg"
             >
               Contact Nara Labs
             </a>
@@ -257,14 +257,12 @@ export default function Enterprise() {
               href="https://yme.rocks/en"
               target="_blank"
               rel="noopener noreferrer"
-              className="button button--secondary button--lg"
+              className="button button--primary button--lg"
             >
               Contact YME
             </a>
             <Link
-              className={
-                "button button--outline button--secondary button--lg"
-              }
+              className="button button--primary button--lg"
               to="/docs/installation"
             >
               Self-Install Guide

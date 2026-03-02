@@ -102,6 +102,13 @@
   text-decoration: none;
 }
 
+[data-theme="dark"] .button--primary:hover,
+[data-theme="dark"] .button--primary:focus {
+  --ifm-button-background-color: var(--senaite-gold);
+  --ifm-button-color: #fff;
+  text-decoration: none;
+}
+
 .button--secondary {
   --ifm-button-background-color: transparent;
   --ifm-button-color: var(--senaite-dark);

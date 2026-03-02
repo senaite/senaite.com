@@ -60,7 +60,6 @@ const config = {
         logo: {
           alt: "SENAITE",
           src: "img/senaite_product_logo_text.svg",
-          srcDark: "img/senaite_product_logo_grey.svg",
           width: 160,
         },
         items: [

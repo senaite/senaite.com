@@ -6,6 +6,10 @@
   border-bottom: 1px solid var(--senaite-border);
 }
 
+[data-theme="dark"] .hero {
+  background: var(--ifm-background-color);
+}
+
 .heroLogo {
   width: 300px;
   max-width: 75%;
@@ -15,7 +19,7 @@
 .heroTagline {
   font-size: 1.9rem;
   font-weight: 300;
-  color: var(--senaite-dark);
+  color: var(--senaite-text);
   letter-spacing: -0.02em;
   margin-bottom: 0.75rem;
   line-height: 1.3;
