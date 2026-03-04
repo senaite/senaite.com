@@ -1,4 +1,4 @@
-# senaite3.com
+# senaite.com
 
 Source for the [SENAITE](https://www.senaite.com) website, built with
 [Docusaurus v3](https://docusaurus.io).
@@ -51,23 +51,23 @@ npm run serve
 ## Project structure
 
 ```
-senaite3.com/
-├── docs/                   Documentation pages (Markdown)
-│   ├── installation.md     Bare-metal installation guide
-│   ├── docker.md           Docker installation guide
-│   └── upgrade.md          Upgrade guide
+senaite.com/
+├── docs/                    Documentation pages (Markdown)
+│   ├── 01-installation.md   Bare-metal installation guide
+│   ├── 02-docker.md         Docker installation guide
+│   └── 03-upgrade.md        Upgrade guide
 ├── src/
 │   ├── css/
-│   │   └── custom.css      Global styles and brand tokens
+│   │   └── custom.css       Global styles and brand tokens
 │   └── pages/
-│       ├── index.js        Homepage
-│       ├── features.js     Features overview
-│       └── enterprise.js   Professional services / providers
+│       ├── index.js         Homepage
+│       ├── features.js      Features overview
+│       └── enterprise.js    Professional services / providers
 ├── static/
-│   ├── img/                Images and SVG illustrations
-│   └── logos/              Customer and partner logos
-├── docusaurus.config.js    Site configuration
-└── sidebars.js             Documentation sidebar structure
+│   ├── img/                 Images and SVG illustrations
+│   └── logos/               Customer and partner logos
+├── docusaurus.config.js     Site configuration
+└── sidebars.js              Documentation sidebar structure
 ```
 
 
@@ -80,22 +80,20 @@ which serves the live site.
 
 See `.github/workflows/deploy.yml` for the full workflow definition.
 
-### Deploy key setup
+### Personal access token setup
 
-The workflow authenticates to `senaite/senaite.github.io` using an SSH
-deploy key. This is a one-time setup.
+The workflow authenticates to `senaite/senaite.github.io` using a GitHub
+Personal Access Token (PAT). This is a one-time setup.
 
-Generate a key pair:
+Generate a classic PAT at `https://github.com/settings/tokens`:
 
-```bash
-ssh-keygen -t ed25519 -C "senaite3.com deploy" -f senaite3_deploy
-```
+- Note: `senaite.com deploy`
+- Scope: `repo` (full control of private repositories)
 
-Add the **public key** (`senaite3_deploy.pub`) as a deploy key on
-`senaite/senaite.github.io` with write access.
+Add the token as a repository secret on `senaite/senaite.com`:
 
-Add the **private key** (`senaite3_deploy`) as the `DEPLOY_KEY` secret
-on `senaite/senaite3.com`.
+- Name: `PERSONAL_TOKEN`
+- Value: the token string
 
 Once the secret is in place, every push to `main` triggers a build and
 publishes the result.
