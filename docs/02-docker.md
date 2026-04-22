@@ -22,7 +22,7 @@ The image is published on [Docker Hub][DOCKERHUB] under `senaite/senaite`.
 Pull the latest image and start a container:
 
 ```shell
-docker run --rm --name senaite -p 8080:8080 senaite/senaite:latest
+docker run --rm --name senaite -p 8080:8080 senaite/senaite:2.x
 ```
 
 Open `http://localhost:8080` in a browser and log in with `admin:admin`.
@@ -34,7 +34,7 @@ between runs with this command — see the section below for persistent storage.
 Start in foreground (debug) mode to see log output:
 
 ```shell
-docker run --rm --name senaite -p 8080:8080 senaite/senaite:latest fg
+docker run --rm --name senaite -p 8080:8080 senaite/senaite:2.x fg
 ```
 
 
@@ -48,7 +48,7 @@ docker run -d \
   --name senaite \
   -p 8080:8080 \
   -v senaite-data:/data \
-  senaite/senaite:latest
+  senaite/senaite:2.x
 ```
 
 The named volume `senaite-data` is managed by Docker and survives container
@@ -63,7 +63,7 @@ a `compose.yml` file:
 ```yaml
 services:
   senaite:
-    image: senaite/senaite:latest
+    image: senaite/senaite:2.x
     restart: unless-stopped
     ports:
       - "8080:8080"
@@ -105,14 +105,14 @@ allows several client instances to serve requests simultaneously.
 ```yaml
 services:
   zeo:
-    image: senaite/senaite:latest
+    image: senaite/senaite:2.x
     restart: unless-stopped
     command: zeo
     volumes:
       - senaite-data:/data
 
   instance1:
-    image: senaite/senaite:latest
+    image: senaite/senaite:2.x
     restart: unless-stopped
     ports:
       - "8081:8080"
@@ -122,7 +122,7 @@ services:
       - zeo
 
   instance2:
-    image: senaite/senaite:latest
+    image: senaite/senaite:2.x
     restart: unless-stopped
     ports:
       - "8082:8080"
@@ -160,7 +160,7 @@ with `==`:
 ```shell
 docker run --rm -p 8080:8080 \
   -e ADDONS="senaite.storage==1.0.0 senaite.patient" \
-  senaite/senaite:latest
+  senaite/senaite:2.x
 ```
 
 
@@ -172,7 +172,7 @@ Replace `latest` with a version tag from [Docker Hub][DOCKERHUB]:
 docker run --rm -p 8080:8080 senaite/senaite:v2.6.0
 ```
 
-Available tags: `v2.6.0`, `v2.5.0`, `v2.4.1`, `v2.4.0`, `latest`.
+Available tags: `v2.6.0`, `v2.5.0`, `v2.4.1`, `v2.4.0`, `2.x`.
 
 
 ## Further Reading
