@@ -19,7 +19,7 @@ The image is published on [Docker Hub][DOCKERHUB] under `senaite/senaite`.
 
 ## Quick Start
 
-Pull the latest image and start a container:
+Start a container with the rolling `2.x` image tag:
 
 ```shell
 docker run --rm --name senaite -p 8080:8080 senaite/senaite:2.x
@@ -166,7 +166,8 @@ docker run --rm -p 8080:8080 \
 
 ## Pinning a Specific Version
 
-Replace `latest` with a version tag from [Docker Hub][DOCKERHUB]:
+SENAITE does not publish a `latest` Docker tag. Use the rolling `2.x` tag, or
+replace `2.x` with a specific version tag from [Docker Hub][DOCKERHUB]:
 
 ```shell
 docker run --rm -p 8080:8080 senaite/senaite:v2.6.0
