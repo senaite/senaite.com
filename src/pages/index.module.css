@@ -1,49 +1,361 @@
-/* Hero banner */
+/* Homepage. Brand tokens come from src/css/custom.css. */
+
+/* ---------- Hero: claim left, the product right ---------- */
 .hero {
-  background: var(--senaite-surface);
-  text-align: center;
-  padding: 6rem 1rem 5rem;
+  padding: 5rem 0 4.5rem;
   border-bottom: 1px solid var(--senaite-border);
+  overflow: hidden;
 }
 
-.heroLogo {
-  width: 300px;
-  max-width: 75%;
-  margin-bottom: 2rem;
-  /* SVG has light fills; invert to dark for the white hero background */
-  filter: invert(1);
+.heroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 3.5rem;
+  align-items: center;
 }
 
-[data-theme="dark"] .heroLogo {
-  /* Original light fills read correctly on the dark hero background */
-  filter: none;
-}
-
-.heroTagline {
-  font-size: 1.9rem;
-  font-weight: 300;
-  color: var(--senaite-text);
+.heroTitle {
+  font-size: clamp(2.1rem, 3.6vw, 3rem);
+  font-weight: 500;
+  line-height: 1.12;
   letter-spacing: -0.02em;
-  margin-bottom: 0.75rem;
-  line-height: 1.3;
+  color: var(--senaite-text);
+  margin-bottom: 1.25rem;
 }
 
 .heroSubtitle {
   font-size: 1.15rem;
-  color: var(--senaite-muted);
-  max-width: 520px;
-  margin: 0 auto 2.5rem;
   line-height: 1.6;
+  color: var(--senaite-muted);
+  max-width: 34rem;
+  margin-bottom: 2rem;
 }
 
 .heroButtons {
   display: flex;
-  gap: 0.875rem;
-  justify-content: center;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 
-/* Feature card vertical spacing */
-.featureCard {
+.heroShot {
+  margin: 0;
+  border: 1px solid var(--senaite-border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 24px 48px -24px rgba(41, 51, 51, 0.35);
+  /* Let the screenshot run past the container on wide screens */
+  margin-right: -6rem;
+}
+
+.heroShot img {
+  display: block;
+  width: 100%;
+}
+
+.browserBar {
+  display: flex;
+  gap: 6px;
+  padding: 10px 12px;
+  background: var(--senaite-surface);
+  border-bottom: 1px solid var(--senaite-border);
+}
+
+.browserBar span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--senaite-border);
+}
+
+/* ---------- Sample lifecycle ----------
+   Monochrome on purpose: the states are a sequence, not categories,
+   so they share one line and one colour. Only the end point is
+   filled. */
+.lifecycle {
+  --marker-bg: var(--senaite-surface);
+  background: var(--senaite-surface);
+  border-bottom: 1px solid var(--senaite-border);
+  padding: 4.5rem 0 5rem;
+}
+
+.lifecycleTitle {
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--senaite-text);
+  margin-bottom: 3rem;
+}
+
+.lifecycleTrack {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.state {
+  position: relative;
+  padding: 2.25rem 1.5rem 0 0;
+  border-top: 1px solid var(--senaite-line);
+}
+
+.marker {
+  position: absolute;
+  top: -1.15rem;
+  left: 0;
+  width: 2rem;
+  height: 2.3rem;
+  display: grid;
+  place-items: center;
+  color: var(--senaite-text);
+}
+
+.marker svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.marker polygon {
+  fill: var(--marker-bg);
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.markerNumber {
+  position: relative;
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+/* The line ends where the sample does */
+.state:last-child {
+  border-color: transparent;
+}
+
+.state:last-child .marker polygon {
+  fill: currentColor;
+}
+
+.state:last-child .markerNumber {
+  color: var(--senaite-surface);
+}
+
+.stateLabel {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--senaite-text);
+  margin-bottom: 0.4rem;
+}
+
+.stateText {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--senaite-muted);
+  margin: 0;
+}
+
+/* ---------- Topics: text and a real screen, alternating ---------- */
+.topic {
+  padding: 4.5rem 0;
+}
+
+.topic + .topic {
+  border-top: 1px solid var(--senaite-border);
+}
+
+.topicGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+  gap: 3.5rem;
+  align-items: center;
+}
+
+.topicReverse .topicText {
+  order: 2;
+}
+
+.topicTitle {
+  font-size: 2rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--senaite-text);
+  margin-bottom: 0.75rem;
+}
+
+.topicIntro {
+  font-size: 1.1rem;
+  color: var(--senaite-muted);
   margin-bottom: 2rem;
+}
+
+.points {
+  margin: 0;
+}
+
+.point {
+  padding: 1rem 0;
+  border-top: 1px solid var(--senaite-border);
+}
+
+.point dt {
+  font-weight: 600;
+  color: var(--senaite-text);
+  margin-bottom: 0.25rem;
+}
+
+.point dd {
+  margin: 0;
+  color: var(--senaite-muted);
+  line-height: 1.6;
+}
+
+.topicShot {
+  display: block;
+  border: 1px solid var(--senaite-border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.topicShot img {
+  display: block;
+  width: 100%;
+}
+
+.topicCode {
+  min-width: 0;
+  font-size: 0.85rem;
+}
+
+.topicCode :global(.theme-code-block) {
+  margin-bottom: 0;
+}
+
+/* The title is the command that produced the response */
+.topicCode :global([class*="codeBlockTitle"]) {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.8rem;
+  font-weight: 400;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.topicShot:focus-visible {
+  outline: 3px solid var(--senaite-accent);
+  outline-offset: 3px;
+}
+
+/* ---------- Open source ---------- */
+.openSource {
+  padding: 5.5rem 0;
+  background: var(--senaite-surface);
+  border-top: 1px solid var(--senaite-border);
+}
+
+.openSourceHead {
+  max-width: 40rem;
+  margin-bottom: 2rem;
+}
+
+.openSourceGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 2.5rem;
+  margin: 0;
+}
+
+/* ---------- Trusted by ---------- */
+.trusted {
+  padding: 4rem 0;
+  border-top: 1px solid var(--senaite-border);
+}
+
+.trustedLead {
+  color: var(--senaite-muted);
+  margin-bottom: 2rem;
+}
+
+/* ---------- Closing call to action ----------
+   Light, so the footer stays the only dark band on the page. */
+.cta {
+  padding: 4.5rem 0;
+  border-top: 1px solid var(--senaite-border);
+}
+
+.ctaInner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.ctaTitle {
+  font-size: 1.75rem;
+  font-weight: 500;
+  color: var(--senaite-text);
+  margin-bottom: 0.5rem;
+}
+
+.ctaText {
+  color: var(--senaite-muted);
+  margin: 0;
+  max-width: 36rem;
+}
+
+/* ---------- Dark mode ---------- */
+[data-theme="dark"] .heroShot,
+[data-theme="dark"] .topicShot {
+  border-color: var(--senaite-border);
+  box-shadow: none;
+}
+
+
+/* ---------- Narrow screens ---------- */
+@media (max-width: 996px) {
+  .heroGrid,
+  .topicGrid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .heroShot {
+    margin-right: 0;
+  }
+
+  .topicReverse .topicText {
+    order: 0;
+  }
+
+  .lifecycleTrack {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+
+  .state {
+    border-top: 0;
+    border-left: 1px solid var(--senaite-line);
+    padding: 0 0 0 2rem;
+  }
+
+  .marker {
+    top: 0;
+    left: -1rem;
+  }
+
+  .openSourceGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
 }

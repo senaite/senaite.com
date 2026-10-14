@@ -1,66 +1,84 @@
+@import "@fontsource/jost/400.css";
+@import "@fontsource/jost/500.css";
+@import "@fontsource/jost/600.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+
 /**
  * SENAITE brand colors and global overrides for Docusaurus.
  *
- * Primary accent: #927f54 (gold)
- * Dark:           #293333
- * Surface:        #f8f8f8
+ * Accent: petrol, a darker shade of the logo manual's "Water"
+ *         variant colour #5fa8bf, so white text on it keeps a
+ *         4.5:1 contrast. Dark mode uses #5fa8bf itself.
+ * Dark:    #293333
+ * Surface: #f8f8f8
  */
 
 :root {
-  --ifm-color-primary: #927f54;
-  --ifm-color-primary-dark: #846e45;
-  --ifm-color-primary-darker: #7e6840;
-  --ifm-color-primary-darkest: #685534;
-  --ifm-color-primary-light: #a08e64;
-  --ifm-color-primary-lighter: #a6946a;
-  --ifm-color-primary-lightest: #b9aa88;
+  --ifm-color-primary: #1d6b75;
+  --ifm-color-primary-dark: #1a606a;
+  --ifm-color-primary-darker: #185b63;
+  --ifm-color-primary-darkest: #144b52;
+  --ifm-color-primary-light: #20767f;
+  --ifm-color-primary-lighter: #227c87;
+  --ifm-color-primary-lightest: #2a909c;
 
   --ifm-code-font-size: 95%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.07);
 
   /* SENAITE brand tokens */
   --senaite-dark: #293333;
-  --senaite-gold: #927f54;
+  --senaite-accent: var(--ifm-color-primary);
   --senaite-surface: #f8f8f8;
   --senaite-border: #e8e8e8;
+  /* Connecting lines, darker than borders: they carry meaning */
+  --senaite-line: #aab4b4;
   --senaite-text: #1c2424;
   --senaite-muted: #666;
 
   /* Navbar — white, clean */
   --ifm-navbar-background-color: #ffffff;
   --ifm-navbar-link-color: var(--senaite-dark);
-  --ifm-navbar-link-hover-color: var(--senaite-gold);
+  --ifm-navbar-link-hover-color: var(--senaite-accent);
   --ifm-navbar-shadow: 0 1px 0 0 var(--senaite-border);
 
-  /* Global type scale */
+  /* Type: Jost (geometric, close to the wordmark), self-hosted (no third-party font requests) */
+  --ifm-font-family-base: "Jost", system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  --ifm-heading-font-family: var(--ifm-font-family-base);
+  --ifm-font-family-monospace: "IBM Plex Mono", ui-monospace,
+    "SFMono-Regular", Menlo, monospace;
   --ifm-font-size-base: 17px;
-  --ifm-line-height-base: 1.7;
-  --ifm-heading-font-weight: 300;
-  --ifm-h1-font-size: 3rem;
-  --ifm-h2-font-size: 2.4rem;
-  --ifm-h3-font-size: 1.25rem;
+  --ifm-line-height-base: 1.65;
+  --ifm-heading-font-weight: 500;
+  --ifm-h1-font-size: 2.75rem;
+  --ifm-h2-font-size: 2rem;
+  --ifm-h3-font-size: 1.2rem;
+  --ifm-heading-line-height: 1.2;
+
 }
 
 [data-theme="dark"] {
-  --ifm-color-primary: #c4ab7a;
-  --ifm-color-primary-dark: #b89a61;
-  --ifm-color-primary-darker: #b19357;
-  --ifm-color-primary-darkest: #967b42;
-  --ifm-color-primary-light: #ceba93;
-  --ifm-color-primary-lighter: #d3c09b;
-  --ifm-color-primary-lightest: #e0d3b7;
+  --ifm-color-primary: #5fa8bf;
+  --ifm-color-primary-dark: #4f9cb4;
+  --ifm-color-primary-darker: #4895ad;
+  --ifm-color-primary-darkest: #3b7d92;
+  --ifm-color-primary-light: #73b3c7;
+  --ifm-color-primary-lighter: #7cb8cb;
+  --ifm-color-primary-lightest: #98c8d7;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 
   /* SENAITE dark-mode brand tokens */
   --senaite-surface: #1e2626;
   --senaite-border: #2e3c3c;
+  --senaite-line: #566868;
   --senaite-muted: #8a9a9a;
   --senaite-text: #edf2f2;
 
   /* Navbar */
   --ifm-navbar-background-color: #1a2020;
   --ifm-navbar-link-color: #d4dada;
-  --ifm-navbar-link-hover-color: var(--senaite-gold);
+  --ifm-navbar-link-hover-color: var(--senaite-accent);
   --ifm-navbar-shadow: 0 1px 0 0 var(--senaite-border);
 }
 
@@ -83,7 +101,7 @@
 }
 
 .navbar__link--active {
-  color: var(--senaite-gold) !important;
+  color: var(--senaite-accent) !important;
   font-weight: 500;
 }
 
@@ -93,7 +111,7 @@
 }
 
 /* -------------------------------------------------------
-   Buttons — outline style globally via Infima CSS props
+   Buttons: primary is filled, secondary is outlined
 ------------------------------------------------------- */
 .button {
   border-radius: 3px;
@@ -103,28 +121,36 @@
 }
 
 .button--primary {
-  --ifm-button-background-color: transparent;
-  --ifm-button-color: var(--senaite-gold);
-  --ifm-button-border-color: var(--senaite-gold);
+  --ifm-button-background-color: #1d6b75;
+  --ifm-button-border-color: #1d6b75;
+  --ifm-button-color: #fff;
 }
 
 .button--primary:hover,
 .button--primary:focus {
-  --ifm-button-background-color: rgba(146, 127, 84, 0.1);
-  --ifm-button-color: var(--senaite-gold);
+  --ifm-button-background-color: #175a62;
+  --ifm-button-border-color: #175a62;
+  --ifm-button-color: #fff;
   text-decoration: none;
 }
 
 [data-theme="dark"] .button--primary {
-  --ifm-button-color: var(--ifm-color-primary);
+  --ifm-button-background-color: var(--ifm-color-primary);
   --ifm-button-border-color: var(--ifm-color-primary);
+  --ifm-button-color: #0f1a1c;
 }
 
 [data-theme="dark"] .button--primary:hover,
 [data-theme="dark"] .button--primary:focus {
-  --ifm-button-background-color: var(--ifm-color-primary);
-  --ifm-button-color: #fff;
+  --ifm-button-background-color: var(--ifm-color-primary-lighter);
+  --ifm-button-border-color: var(--ifm-color-primary-lighter);
+  --ifm-button-color: #0f1a1c;
   text-decoration: none;
+}
+
+.button--lg {
+  --ifm-button-padding-horizontal: 1.5rem;
+  font-size: 1.05rem;
 }
 
 .button--secondary {
@@ -174,26 +200,16 @@
 }
 
 .senaite-section__header {
-  text-align: center;
-  margin-bottom: 3.5rem;
+  max-width: 44rem;
+  margin-bottom: 3rem;
 }
 
 .senaite-section__title {
-  font-size: 2.6rem;
-  font-weight: 300;
+  font-size: 2rem;
+  font-weight: 500;
   color: var(--senaite-text);
   margin-bottom: 0;
   letter-spacing: -0.02em;
-}
-
-/* Gold rule under every section title */
-.senaite-section__title::after {
-  content: "";
-  display: block;
-  width: 40px;
-  height: 2px;
-  background: var(--senaite-gold);
-  margin: 1rem auto 0;
 }
 
 [data-theme="dark"] .senaite-section__title {
@@ -204,10 +220,8 @@
   font-size: 1.2rem;
   font-weight: 400;
   color: var(--senaite-muted);
-  margin-top: 1.25rem;
-  max-width: 640px;
-  margin-left: auto;
-  margin-right: auto;
+  margin-top: 0.75rem;
+  margin-bottom: 0;
   line-height: 1.6;
 }
 
@@ -295,26 +309,20 @@
 ------------------------------------------------------- */
 .provider-grid {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 2.5rem;
   flex-wrap: wrap;
   margin: 1.5rem 0;
 }
 
 .provider-card {
-  text-align: center;
-  padding: 2.5rem 2rem;
+  padding: 2rem;
   background: #fff;
   border: 1px solid var(--senaite-border);
-  border-top: 3px solid var(--senaite-gold);
   border-radius: 4px;
   min-width: 280px;
   max-width: 360px;
   transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.provider-card:hover {
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
 }
 
 [data-theme="dark"] .provider-card {
@@ -326,7 +334,7 @@
   height: 72px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   margin-bottom: 1rem;
 }
 
@@ -367,7 +375,7 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: var(--senaite-gold);
+  background: var(--senaite-accent);
   color: #fff;
   display: flex;
   align-items: center;
@@ -405,7 +413,7 @@
 .trusted-logos {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 3rem;
   margin-top: 2rem;
@@ -435,35 +443,39 @@
 }
 
 /* -------------------------------------------------------
-   CTA banner
+   CTA banner: light, so the footer is the only dark band
 ------------------------------------------------------- */
 .cta-banner {
-  background: var(--senaite-surface);
+  padding: 4.5rem 0;
   border-top: 1px solid var(--senaite-border);
-  text-align: center;
-  padding: 5rem 1rem;
 }
 
 .cta-banner__title {
-  font-size: 2.2rem;
-  font-weight: 300;
-  letter-spacing: -0.02em;
-  margin-bottom: 0.75rem;
+  font-size: 1.75rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
   color: var(--senaite-text);
 }
 
 .cta-banner__subtitle {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   color: var(--senaite-muted);
-  margin-bottom: 2rem;
-  max-width: 540px;
-  margin-left: auto;
-  margin-right: auto;
+  margin-bottom: 1.75rem;
+  max-width: 36rem;
 }
 
 .cta-banner__buttons {
   display: flex;
-  gap: 1rem;
-  justify-content: center;
+  gap: 0.75rem;
+  justify-content: flex-start;
   flex-wrap: wrap;
 }
+
+/* -------------------------------------------------------
+   Footer: brand slate instead of the theme's default grey
+------------------------------------------------------- */
+.footer--dark {
+  --ifm-footer-background-color: #1f2727;
+  --ifm-footer-link-hover-color: var(--ifm-color-primary-lightest);
+}
+

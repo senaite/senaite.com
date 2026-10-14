@@ -39,7 +39,7 @@ const PROVIDERS = [
     tier: 2,
     name: "YME",
     logo: "/img/yme.svg",
-    tagline: "Making Complex Simple \u2014 with Standards",
+    tagline: "Making Complex Simple, with Standards",
     url: "https://yme.rocks/en",
     description:
       "Healthcare automation company based in Novosibirsk,"
@@ -52,8 +52,7 @@ const PROVIDERS = [
 
 const WHY_CHOOSE = [
   {
-    title: "Deep Platform Knowledge",
-    image: "/img/undraw_version_control.svg",
+    title: "Deep platform knowledge",
     content:
       "Providers are the authors of SENAITE. They understand the"
       + " codebase thoroughly, know why design decisions were made"
@@ -62,8 +61,7 @@ const WHY_CHOOSE = [
       + " back into the platform and benefits the whole community.",
   },
   {
-    title: "Laboratory and IT Fluency",
-    image: "/img/undraw_usability_testing.svg",
+    title: "Laboratory and IT fluency",
     content:
       "Successful LIMS implementation requires fluency in both"
       + " laboratory science and software engineering. Providers"
@@ -72,8 +70,7 @@ const WHY_CHOOSE = [
       + " constraints on both sides.",
   },
   {
-    title: "Defined Delivery Standards",
-    image: "/img/undraw_confirmation.svg",
+    title: "Defined delivery standards",
     content:
       "All code is peer-reviewed before delivery. Automated test"
       + " suites cover the platform and every new feature. The"
@@ -81,8 +78,7 @@ const WHY_CHOOSE = [
       + " and is straightforward for a future team to maintain.",
   },
   {
-    title: "Scoped Project Plans",
-    image: "/img/undraw_organizing_projects.svg",
+    title: "Scoped project plans",
     content:
       "Every engagement begins with a requirements meeting and a"
       + " formal GAP analysis that establishes exactly what SENAITE"
@@ -91,8 +87,7 @@ const WHY_CHOOSE = [
       + " explicit scope, milestones and deliverables follows.",
   },
   {
-    title: "Capacity Building",
-    image: "/img/undraw_high_five.svg",
+    title: "Capacity building",
     content:
       "Functional workshops train laboratory staff to use the"
       + " system with confidence and expose edge cases that generic"
@@ -101,8 +96,7 @@ const WHY_CHOOSE = [
       + " extend the platform without outside help.",
   },
   {
-    title: "Long-Term Support",
-    image: "/img/undraw_instant_support.svg",
+    title: "Long-term support",
     content:
       "Support contracts cover version updates, security patches,"
       + " system monitoring and corrective actions. The objective is"
@@ -130,7 +124,7 @@ function ProviderCard({ name, logo, tagline, url, description, compact }) {
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className="button button--primary button--sm"
+        className="button button--secondary button--sm"
       >
         Visit {name}
       </a>
@@ -138,14 +132,9 @@ function ProviderCard({ name, logo, tagline, url, description, compact }) {
   );
 }
 
-function WhyCard({ title, image, content }) {
+function WhyCard({ title, content }) {
   return (
     <div className={clsx("col col--4", styles.whyCard)}>
-      {image && (
-        <div className={styles.whyIcon}>
-          <img src={image} alt="" role="presentation" />
-        </div>
-      )}
       <h3>{title}</h3>
       <p>{content}</p>
     </div>
@@ -178,7 +167,7 @@ export default function Enterprise() {
           <div className="container">
             <div className="senaite-section__header">
               <h2 className="senaite-section__title">
-                Service Providers
+                Service providers
               </h2>
               <p className="senaite-section__subtitle">
                 Each provider is an active contributor to the SENAITE
@@ -187,17 +176,17 @@ export default function Enterprise() {
               </p>
             </div>
 
-            {/* Tier 1 — Core Maintainers */}
-            <p className={styles.tierLabel}>Core Maintainers</p>
+            {/* Tier 1: core maintainers */}
+            <p className={styles.tierLabel}>Core maintainers</p>
             <div className="provider-grid">
               {tier1.map((p) => (
                 <ProviderCard key={p.name} {...p} />
               ))}
             </div>
 
-            {/* Tier 2 — Certified Partners */}
+            {/* Tier 2: certified partners */}
             <p className={clsx(styles.tierLabel, styles.tierLabelSpaced)}>
-              Certified Partners
+              Certified partners
             </p>
             <div className={styles.partnerGrid}>
               {tier2.map((p) => (
@@ -212,11 +201,11 @@ export default function Enterprise() {
           <div className="container">
             <div className="senaite-section__header">
               <h2 className="senaite-section__title">
-                What Sets Professional Providers Apart
+                What sets professional providers apart
               </h2>
               <p className="senaite-section__subtitle">
                 Implementation quality determines whether a LIMS
-                delivers long-term value
+                delivers long-term value.
               </p>
             </div>
             <div className="row">
@@ -229,45 +218,47 @@ export default function Enterprise() {
 
         {/* CTA */}
         <div className="cta-banner">
-          <h2 className="cta-banner__title">
-            Work with the teams who build SENAITE
-          </h2>
-          <p className="cta-banner__subtitle">
-            Providers have experience across clinical, research and
-            environmental laboratories. Contact one directly to
-            discuss your requirements.
-          </p>
-          <div className="cta-banner__buttons">
-            <a
-              href="https://www.ridingbytes.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="button button--primary button--lg"
-            >
-              Contact RIDING BYTES
-            </a>
-            <a
-              href="https://naralabs.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="button button--primary button--lg"
-            >
-              Contact NARALABS
-            </a>
-            <a
-              href="https://yme.rocks/en"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="button button--primary button--lg"
-            >
-              Contact YME
-            </a>
-            <Link
-              className="button button--primary button--lg"
-              to="/docs/installation"
-            >
-              Self-Install Guide
-            </Link>
+          <div className="container">
+            <h2 className="cta-banner__title">
+              Work with the teams who build SENAITE
+            </h2>
+            <p className="cta-banner__subtitle">
+              Providers have experience across clinical, research and
+              environmental laboratories. Contact one directly to
+              discuss your requirements.
+            </p>
+            <div className="cta-banner__buttons">
+              <a
+                href="https://www.ridingbytes.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="button button--secondary button--lg"
+              >
+                Contact RIDING BYTES
+              </a>
+              <a
+                href="https://naralabs.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="button button--secondary button--lg"
+              >
+                Contact NARALABS
+              </a>
+              <a
+                href="https://yme.rocks/en"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="button button--secondary button--lg"
+              >
+                Contact YME
+              </a>
+              <Link
+                className="button button--secondary button--lg"
+                to="/docs/installation"
+              >
+                Installation guide
+              </Link>
+            </div>
           </div>
         </div>
       </main>
