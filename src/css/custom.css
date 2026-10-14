@@ -316,19 +316,13 @@
 }
 
 .provider-card {
-  text-align: center;
-  padding: 2.5rem 2rem;
+  padding: 2rem;
   background: #fff;
   border: 1px solid var(--senaite-border);
-  border-top: 3px solid var(--senaite-accent);
   border-radius: 4px;
   min-width: 280px;
   max-width: 360px;
   transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.provider-card:hover {
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
 }
 
 [data-theme="dark"] .provider-card {
@@ -340,7 +334,7 @@
   height: 72px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   margin-bottom: 1rem;
 }
 
@@ -449,40 +443,25 @@
 }
 
 /* -------------------------------------------------------
-   CTA banner
+   CTA banner: light, so the footer is the only dark band
 ------------------------------------------------------- */
 .cta-banner {
-  /* Infima colours outlined buttons with the base font colour */
-  --ifm-font-color-base: #fff;
-  background: var(--senaite-dark);
-  color: #e6ecec;
-  padding: 4rem 0;
-}
-
-[data-theme="dark"] .cta-banner {
-  background: #141a1a;
+  padding: 4.5rem 0;
+  border-top: 1px solid var(--senaite-border);
 }
 
 .cta-banner__title {
   font-size: 1.75rem;
-  font-weight: 600;
+  font-weight: 500;
   margin-bottom: 0.5rem;
-  color: #fff;
+  color: var(--senaite-text);
 }
 
 .cta-banner__subtitle {
   font-size: 1.05rem;
-  color: #c8d2d2;
+  color: var(--senaite-muted);
   margin-bottom: 1.75rem;
   max-width: 36rem;
-}
-
-.cta-banner .button.button--outline,
-.cta-banner .button.button--secondary {
-  --ifm-button-color: #fff;
-  --ifm-button-border-color: rgba(255, 255, 255, 0.5);
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .cta-banner__buttons {
@@ -500,9 +479,3 @@
   --ifm-footer-link-hover-color: var(--ifm-color-primary-lightest);
 }
 
-.cta-banner .button.button--outline:hover,
-.cta-banner .button.button--secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: #fff;
-  color: #fff;
-}

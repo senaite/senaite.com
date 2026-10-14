@@ -181,7 +181,7 @@ export default function Features() {
           <div className="container">
             <div className="senaite-section__header">
               <h2 className="senaite-section__title">
-                What&apos;s Included
+                What&apos;s included
               </h2>
               <p className="senaite-section__subtitle">
                 Every module covers a real workflow. Nothing is an add-on.
@@ -211,13 +211,13 @@ export default function Features() {
                 className="button button--primary button--lg"
                 to="/docs/installation"
               >
-                Installation Guide
+                Installation guide
               </Link>
               <Link
-                className="button button--outline button--secondary button--lg"
+                className="button button--secondary button--lg"
                 to="/enterprise"
               >
-                Professional Services
+                Service providers
               </Link>
             </div>
           </div>
