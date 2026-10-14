@@ -4,14 +4,19 @@ title: Installation
 sidebar_label: Installation
 ---
 
-SENAITE is an add-on for the [Plone Content Management Framework][PLONE].
-Installation therefore depends on a working Python environment and the
-[Buildout][BUILDOUT] tool.
+SENAITE is assembled with [Buildout][BUILDOUT], which installs the right
+version of every package and generates the scripts that run the server.
+The recommended starting point is [senaite.starter][SENAITE-STARTER], a
+ready made buildout maintained by the SENAITE developers.
+
+To try SENAITE without installing Python, use the
+[Docker image](./02-docker.md) instead.
+
 
 ## Supported Platforms
 
-SENAITE runs on Linux. The recommended distribution is **Ubuntu 22.04 LTS**
-or **Ubuntu 24.04 LTS**. Debian is equally supported. macOS works for
+SENAITE runs on Linux. The commands below are for **Ubuntu 22.04 LTS**
+and **Ubuntu 24.04 LTS**; Debian works the same way. macOS works for
 development but is not recommended for production deployments.
 
 Installation on Windows is not covered in this guide.
@@ -19,31 +24,35 @@ Installation on Windows is not covered in this guide.
 
 ## Python Requirement
 
-The current SENAITE release series is based on **Plone 5.2**, which requires
-**Python 2.7**. It is strongly recommended to manage Python using
-[Pyenv][PYENV] rather than the system interpreter to avoid version conflicts
-and permission issues.
+SENAITE 2.x runs on **Python 2.7**. Current distributions no longer ship
+it, so install it with [pyenv][PYENV] into your home directory. This keeps
+it apart from the system Python and needs no root rights.
+
+Python 2.7 no longer receives security fixes. Run SENAITE behind a web
+server and do not expose the application server directly to the
+internet.
 
 
 ## Step 1: Install System Packages
 
-Log in to a fresh Ubuntu installation and install the required packages:
+SENAITE renders PDFs and processes XML and images through C libraries,
+and several Python packages compile against them. Install them first,
+together with the libraries needed to build Python itself:
 
 ```shell
 sudo apt update
-sudo apt install build-essential git byobu zsh \
-  libpcre3-dev libcairo2 libpango-1.0-0 \
-  libpangocairo-1.0-0
+sudo apt install -y git build-essential curl \
+  libxml2 libxml2-dev libxslt1.1 libxslt1-dev \
+  libcairo2 libpango-1.0-0 libpangocairo-1.0-0 \
+  libgdk-pixbuf2.0-0 zlib1g zlib1g-dev libjpeg-dev \
+  libbz2-dev libssl-dev libsqlite3-dev libffi-dev uuid-dev \
+  libnss3-dev libgdbm-dev libgdbm-compat-dev libncursesw5-dev \
+  liblzma-dev libreadline-dev \
+  fonts-dejavu fonts-liberation
 ```
 
-Required packages for building Python:
-
-```shell
-sudo apt install libbz2-dev zlib1g-dev libssl-dev \
-  libsqlite3-dev libffi-dev uuid-dev libnss3-dev \
-  libgdbm-dev libgdbm-compat-dev libncursesw5-dev \
-  liblzma-dev libreadline-dev
-```
+The fonts are used by the PDF reports. Without them, reports render
+boxes instead of letters.
 
 
 ## Step 2: Install Pyenv
@@ -52,12 +61,14 @@ sudo apt install libbz2-dev zlib1g-dev libssl-dev \
 curl https://pyenv.run | bash
 ```
 
-Add the following lines to `~/.bashrc` (or `~/.zshrc` if using Zsh):
+This installs pyenv together with its virtualenv plugin. Add the
+following lines to `~/.bashrc` (or `~/.zshrc` if you use Zsh):
 
 ```shell
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
 ```
 
 Reload your shell:
@@ -71,88 +82,74 @@ source ~/.bashrc
 
 ```shell
 pyenv install 2.7.18
-pyenv virtualenv 2.7.18 senaite
-pyenv activate senaite
+pyenv virtualenv 2.7.18 python2.7-senaite
+pyenv activate python2.7-senaite
 ```
 
-Verify the active interpreter:
+`pyenv install` compiles Python from source. If it stops with a message
+about a missing module, a `-dev` package from Step 1 is missing.
+
+Name the environment as shown, with the version first. On pyenv 2.8 and
+newer, a name that starts with `python-` is resolved differently and can
+point to another environment.
+
+Verify the interpreter:
 
 ```shell
-which python
-# /home/user/.pyenv/versions/senaite/bin/python
+python -V
+# Python 2.7.18
 ```
 
+Every following command assumes this environment is active.
 
-## Step 4: Set Up a SENAITE Directory
+
+## Step 4: Get senaite.starter
 
 ```shell
-mkdir senaite && cd senaite
-```
-
-Create a `requirements.txt` file:
-
-```
-setuptools==44.1.1
-zc.buildout==2.13.8
-wheel
-```
-
-Install the requirements:
-
-```shell
+git clone https://github.com/senaite/senaite.starter.git senaite
+cd senaite
 pip install -r requirements.txt
 ```
 
-
-## Step 5: Create buildout.cfg
-
-Create a `buildout.cfg` file with the following content. Replace the version
-pin for `senaite.lims` with the latest release from [PyPI][SENAITE-PYPI].
-
-```ini
-[buildout]
-index = https://pypi.org/simple/
-extends = https://dist.plone.org/release/5.2.15/versions.cfg
-find-links =
-    https://dist.plone.org/release/5.2.15/
-    https://dist.plone.org/thirdparty/
-
-parts =
-    instance
-
-eggs =
-    senaite.lims
-
-eggs-directory = eggs
-download-cache = downloads
-
-[instance]
-recipe = plone.recipe.zope2instance
-http-address = 0.0.0.0:8080
-user = admin:admin
-wsgi = on
-eggs =
-    ${buildout:eggs}
-
-[versions]
-senaite.lims = 2.6.0
-et-xmlfile = 1.1.0
-```
+`requirements.txt` installs Buildout and the matching `setuptools` into
+the virtual environment. `buildout.cfg` pins the latest SENAITE release
+from [PyPI][SENAITE-PYPI] together with the versions of its dependencies.
 
 
-## Step 6: Run Buildout
+## Step 5: Run Buildout
 
 ```shell
-buildout -c buildout.cfg
+buildout
 ```
 
-Buildout downloads and installs all required packages. This can take several
-minutes on first run.
+Buildout downloads and installs all required packages and generates
+`bin/instance`. This takes several minutes on the first run. If it fails
+while compiling a package, a `-dev` package from Step 1 is usually
+missing; read the compiler output above the Buildout traceback.
+
+The starter's defaults suit a local evaluation: the server listens on all
+network interfaces (`0.0.0.0:8080`) and the admin login is `admin:admin`.
+For a server, change both in a configuration file of your own that
+extends `buildout.cfg`, before the first start:
+
+```ini
+# production.cfg
+[buildout]
+extends = buildout.cfg
+senaite-user = admin:a-long-random-password
+
+[instance]
+http-address = 127.0.0.1:8080
+```
+
+Then build with `buildout -c production.cfg`. The admin password only
+applies when the instance is created; changing it in the file later does
+not change an existing account.
 
 
-## Step 7: Start SENAITE
+## Step 6: Start SENAITE and Create a Site
 
-Start the server in foreground mode:
+Start the server in the foreground:
 
 ```shell
 bin/instance fg
@@ -164,39 +161,39 @@ The server is ready when the log shows:
 INFO Zope Ready to handle requests
 ```
 
-Open a browser and navigate to `http://localhost:8080`.
-
-Log in with `admin:admin` and press the **Install SENAITE LIMS** button on
-the site setup page.
-
-The SENAITE dashboard appears once the installation completes.
+Open `http://localhost:8080` in a browser and click
+**Create a new SENAITE site**. Log in with the admin account from
+`buildout.cfg`. The form that follows suggests the site id `senaite`;
+click **Create SENAITE Site**. The site is then available at
+`http://localhost:8080/senaite`.
 
 
 ## Starting and Stopping
 
 ```shell
-# Start in background (production mode)
+# Start in the background
 bin/instance start
 
 # Stop the server
 bin/instance stop
 
-# Start in foreground (debug mode, verbose logging)
+# Start in the foreground (debug mode, log on the console)
 bin/instance fg
 ```
+
+`fg` runs in debug mode, which is slower and shows more detail. Use
+`start` for normal operation.
 
 
 ## Further Reading
 
-- [senaite.lims on GitHub][SENAITE-GITHUB]
+- [senaite.starter on GitHub][SENAITE-STARTER]
+- [senaite.lims on PyPI][SENAITE-PYPI]
 - [Buildout documentation][BUILDOUT]
 - [Pyenv][PYENV]
-- [Plone documentation][PLONE-DOCS]
 
 
-[PLONE]: https://plone.org
-[PLONE-DOCS]: https://docs.plone.org/manage/installing/installation.html
-[BUILDOUT]: http://www.buildout.org/en/latest/
+[BUILDOUT]: https://www.buildout.org/en/latest/
 [PYENV]: https://github.com/pyenv/pyenv
+[SENAITE-STARTER]: https://github.com/senaite/senaite.starter
 [SENAITE-PYPI]: https://pypi.org/project/senaite.lims/#history
-[SENAITE-GITHUB]: https://github.com/senaite/senaite.lims#readme
