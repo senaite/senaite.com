@@ -1,0 +1,164 @@
+#!/usr/bin/env bash
+# Build senaite.com and publish it to GitHub Pages.
+#
+# The live site is served by GitHub Pages from the master branch of
+# senaite/senaite.github.io (custom domain www.senaite.com, set by
+# static/CNAME). This script builds the site from the checkout and
+# pushes build/ there as one new commit.
+#
+# Explicit on purpose. A deploy happens when someone runs this, not
+# as a side effect of a merge to main.
+#
+# What it does:
+#   1. refuse to run on a dirty or unpushed tree, or off main
+#   2. build, and refuse if build/ came out without an index page
+#   3. show what changes in the published tree
+#   4. ask for the literal word "deploy"
+#   5. commit and push to senaite.github.io (no force push), then
+#      wait for the Pages build and check the site answers
+#
+# Usage:
+#   bin/deploy              build, confirm, publish
+#   bin/deploy --dry-run    build, then show what would change
+#
+# Environment:
+#   PAGES_REPO      Default: git@github.com:senaite/senaite.github.io.git
+#   PAGES_BRANCH    Default: master
+#   DEPLOY_CONFIRM  set to "deploy" to skip the prompt. Intended for
+#                   unattended use only; interactive runs should
+#                   type the word.
+set -euo pipefail
+
+self="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
+cd "$(dirname "$0")/.."
+
+PAGES_REPO="${PAGES_REPO:-git@github.com:senaite/senaite.github.io.git}"
+PAGES_BRANCH="${PAGES_BRANCH:-master}"
+PAGES_API="repos/senaite/senaite.github.io/pages/builds/latest"
+SITE="https://www.senaite.com"
+
+dry=0
+case "${1:-}" in
+    --dry-run) dry=1 ;;
+    -h|--help|help)
+        sed -n '2,29p' "${self}" | sed 's/^#\{0,1\} \{0,1\}//'
+        exit 0 ;;
+    "") ;;
+    *) echo "unknown arg: $1" >&2; exit 2 ;;
+esac
+
+branch="$(git branch --show-current)"
+if [[ "${branch}" != "main" ]]; then
+    echo "on '${branch:-detached HEAD}'; deploy from main only" >&2
+    exit 1
+fi
+sha="$(git rev-parse --short HEAD)"
+
+if [[ -n "$(git status --porcelain)" ]]; then
+    echo "working tree is dirty; commit or stash first:" >&2
+    git status --short >&2
+    exit 1
+fi
+
+git fetch -q origin
+if [[ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]]; then
+    echo "HEAD differs from origin/main; pull or push first" >&2
+    exit 1
+fi
+
+echo "repo:    main @ ${sha}"
+echo "target:  ${PAGES_REPO} (${PAGES_BRANCH})"
+echo
+
+# --- Build -------------------------------------------------
+echo "==> building"
+npm ci
+# A running bin/dev shares .docusaurus/ with the build, and a stale
+# cache there makes the docs pages fail to render. Start clean.
+npm run clear
+npm run build
+
+if [[ ! -f build/index.html ]]; then
+    echo "ERROR: build/index.html is missing after build" >&2
+    exit 1
+fi
+if [[ "$(cat build/CNAME 2>/dev/null)" != "www.senaite.com" ]]; then
+    echo "ERROR: build/CNAME is not www.senaite.com" >&2
+    exit 1
+fi
+
+# --- Stage -------------------------------------------------
+# A shallow clone of the published branch, with its files replaced
+# by build/. Git then shows exactly what the deploy changes.
+work="$(mktemp -d)"
+trap 'rm -rf "${work}"' EXIT
+
+echo "==> fetching ${PAGES_BRANCH}"
+git clone -q --depth 1 --branch "${PAGES_BRANCH}" \
+    "${PAGES_REPO}" "${work}/pages"
+rsync -a --delete --exclude=.git build/ "${work}/pages/"
+git -C "${work}/pages" add -A
+
+changes="$(git -C "${work}/pages" diff --cached --name-status)"
+if [[ -z "${changes}" ]]; then
+    echo "==> nothing to publish, the site already matches ${sha}"
+    exit 0
+fi
+echo "${changes}" | awk '{print $1}' | sort | uniq -c \
+    | awk '{printf "  %s %s\n", $1, $2}'
+
+if [[ "${dry}" -eq 1 ]]; then
+    echo "==> dry run, changed paths:"
+    echo "${changes}" | sed 's/^/  /'
+    exit 0
+fi
+
+answer="${DEPLOY_CONFIRM:-}"
+if [[ -z "${answer}" ]]; then
+    read -rp 'Type "deploy" to publish to www.senaite.com: ' answer
+fi
+[[ "${answer}" == "deploy" ]] || { echo "Aborted."; exit 1; }
+
+# --- Publish -----------------------------------------------
+echo "==> pushing"
+git -C "${work}/pages" commit -q -m "Deploy senaite.com ${sha}"
+published="$(git -C "${work}/pages" rev-parse HEAD)"
+git -C "${work}/pages" push -q origin "HEAD:${PAGES_BRANCH}"
+
+# --- Verify ------------------------------------------------
+# Pages builds asynchronously. Wait until its latest build is the
+# commit just pushed, then check the site answers.
+echo "==> waiting for the Pages build"
+status=""
+for _ in $(seq 1 30); do
+    read -r status commit < <(gh api "${PAGES_API}" \
+        --jq '"\(.status) \(.commit)"' 2>/dev/null || echo "? ?")
+    if [[ "${commit}" == "${published}" && "${status}" == "built" ]]; then
+        break
+    fi
+    if [[ "${commit}" == "${published}" && "${status}" == "errored" ]]; then
+        echo "Pages build errored for ${published}" >&2
+        exit 1
+    fi
+    sleep 10
+done
+if [[ "${status}" != "built" || "${commit}" != "${published}" ]]; then
+    echo "Pages build not finished after 5 minutes (${status})" >&2
+    exit 1
+fi
+
+echo "==> verifying"
+ok=1
+for url in "${SITE}/" "${SITE}/docs/quickstart"; do
+    code="$(curl -sS -o /dev/null -w '%{http_code}' -L \
+        --max-time 15 "${url}" || echo 000)"
+    printf "  %s  %s\n" "${code}" "${url}"
+    [[ "${code}" == "200" ]] || ok=0
+done
+
+if [[ "${ok}" -ne 1 ]]; then
+    echo "==> site did not answer as expected" >&2
+    exit 1
+fi
+
+echo "==> deployed ${sha}"

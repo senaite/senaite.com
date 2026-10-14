@@ -3,9 +3,9 @@
 Source for the [SENAITE](https://www.senaite.com) website, built with
 [Docusaurus v3](https://docusaurus.io).
 
-Published output is pushed to
+The site is served by GitHub Pages from
 [senaite/senaite.github.io](https://github.com/senaite/senaite.github.io)
-on every commit to `main`.
+and published with `bin/deploy`.
 
 
 ## Requirements
@@ -25,11 +25,13 @@ npm install
 Start the development server:
 
 ```bash
-npm start
+bin/dev
 ```
 
-The site is available at `http://localhost:3000`. Most changes are reflected
-immediately without a full page reload.
+The site is available at `http://localhost:3001` (port 3001, so it can run
+next to other Docusaurus sites on 3000; override with `PORT=`). Most changes
+are reflected immediately without a full page reload. `bin/dev --kill` stops a
+stale dev server left on the port.
 
 
 ## Build
@@ -52,6 +54,9 @@ npm run serve
 
 ```
 senaite.com/
+├── bin/
+│   ├── dev                  Local dev server
+│   └── deploy               Build and publish to GitHub Pages
 ├── docs/                    Documentation pages (Markdown)
 │   ├── 01-installation.md   Bare-metal installation guide
 │   ├── 02-docker.md         Docker installation guide
@@ -73,30 +78,24 @@ senaite.com/
 
 ## Deployment
 
-Deployment is handled automatically by GitHub Actions on every push to
-`main`. The workflow builds the site and pushes the `build/` directory to
-[senaite/senaite.github.io](https://github.com/senaite/senaite.github.io),
-which serves the live site.
+Merging to `main` does not publish anything. A deploy is a separate step,
+run by hand from an up to date `main`:
 
-See `.github/workflows/deploy.yml` for the full workflow definition.
+```bash
+bin/deploy --dry-run    # build and list what would change
+bin/deploy              # build, confirm, publish
+```
 
-### Personal access token setup
+`bin/deploy` refuses to run on a dirty tree, off `main` or when `main` is not
+pushed. It builds the site, replaces the contents of the `master` branch of
+[senaite/senaite.github.io](https://github.com/senaite/senaite.github.io)
+with `build/` as one new commit, waits for the GitHub Pages build and checks
+that the site answers. It asks for the word `deploy` before pushing
+(`DEPLOY_CONFIRM=deploy` skips the prompt for unattended runs).
 
-The workflow authenticates to `senaite/senaite.github.io` using a GitHub
-Personal Access Token (PAT). This is a one-time setup.
-
-Generate a classic PAT at `https://github.com/settings/tokens`:
-
-- Note: `senaite.com deploy`
-- Scope: `repo` (full control of private repositories)
-
-Add the token as a repository secret on `senaite/senaite.com`:
-
-- Name: `PERSONAL_TOKEN`
-- Value: the token string
-
-Once the secret is in place, every push to `main` triggers a build and
-publishes the result.
+Pushing needs write access to `senaite/senaite.github.io` over SSH, and the
+`gh` CLI logged in to read the Pages build status. The custom domain comes
+from `static/CNAME`.
 
 
 ## Licence
