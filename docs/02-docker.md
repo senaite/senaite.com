@@ -39,10 +39,10 @@ Start a container with the rolling `2.x` image tag:
 docker run --rm --name senaite -p 8080:8080 senaite/senaite:2.x
 ```
 
-Open `http://localhost:8080` in a browser and click
-**Create a new SENAITE site**. Log in with `admin:admin`, keep the
-suggested site id `senaite` and click **Create SENAITE Site**. The site is
-then available at `http://localhost:8080/senaite`.
+Open `http://localhost:8080` in a browser and log in with `admin:admin`.
+Click **Create a new SENAITE site**, enter `senaite` as **Path identifier**
+and a title, and click **Create SENAITE Site**. The site is then available
+at `http://localhost:8080/senaite`.
 
 The `--rm` flag removes the container when it stops. Data is not persisted
 between runs with this command; see the section below for persistent
