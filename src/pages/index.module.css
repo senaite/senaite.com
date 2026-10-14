@@ -157,7 +157,7 @@
 
 /* ---------- Topics: text and a real screen, alternating ---------- */
 .topic {
-  padding: 5.5rem 0;
+  padding: 4.5rem 0;
 }
 
 .topic + .topic {
@@ -166,8 +166,8 @@
 
 .topicGrid {
   display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-  gap: 4rem;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+  gap: 3.5rem;
   align-items: center;
 }
 
@@ -230,6 +230,15 @@
 
 .topicCode :global(.theme-code-block) {
   margin-bottom: 0;
+}
+
+/* The title is the command that produced the response */
+.topicCode :global([class*="codeBlockTitle"]) {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.8rem;
+  font-weight: 400;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
 .topicShot:focus-visible {
