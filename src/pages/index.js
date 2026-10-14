@@ -237,6 +237,19 @@ function HeroBanner() {
   );
 }
 
+// The step marker is the hexagon of the SENAITE logo, outlined in
+// the colour of the state.
+function StepMarker({ number }) {
+  return (
+    <span className={styles.marker} aria-hidden="true">
+      <svg viewBox="0 0 28 32" focusable="false">
+        <polygon points="14,2 26,9 26,23 14,30 2,23 2,9" />
+      </svg>
+      <span className={styles.markerNumber}>{number}</span>
+    </span>
+  );
+}
+
 function Lifecycle() {
   return (
     <section className={styles.lifecycle}>
@@ -245,8 +258,9 @@ function Lifecycle() {
           How a sample moves through SENAITE
         </h2>
         <ol className={styles.lifecycleTrack}>
-          {LIFECYCLE.map(({ id, label, text }) => (
+          {LIFECYCLE.map(({ id, label, text }, index) => (
             <li key={id} className={styles.state} data-state={id}>
+              <StepMarker number={index + 1} />
               <span className={styles.stateLabel}>{label}</span>
               <code className={styles.stateId}>{id}</code>
               <p className={styles.stateText}>{text}</p>

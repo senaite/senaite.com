@@ -56,7 +56,7 @@
 }
 
 .featureShot:focus-visible {
-  outline: 3px solid var(--senaite-gold);
+  outline: 3px solid var(--senaite-accent);
   outline-offset: 2px;
 }
 

@@ -70,6 +70,7 @@
 
 /* ---------- Sample lifecycle: the one bold element ---------- */
 .lifecycle {
+  --lifecycle-bg: var(--senaite-dark);
   background: var(--senaite-dark);
   color: #e6ecec;
   padding: 4rem 0 4.5rem;
@@ -88,40 +89,53 @@
   padding: 0;
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 0;
-  counter-reset: state;
 }
+
+/* State colours are the variant colours of the SENAITE logo manual
+   (Biobank, Water, Health, Cannabis, Main). */
+.state[data-state="sample_due"] { --state-color: #e1ad00; }
+.state[data-state="sample_received"] { --state-color: #5fa8bf; }
+.state[data-state="to_be_verified"] { --state-color: #eb5f4a; }
+.state[data-state="verified"] { --state-color: #7ebc53; }
+.state[data-state="published"] { --state-color: #d6dadb; }
 
 .state {
   position: relative;
-  padding: 1.75rem 1.25rem 0 0;
-  border-top: 3px solid var(--state-color, var(--senaite-gold));
+  padding: 2.25rem 1.25rem 0 0;
+  border-top: 3px solid var(--state-color);
 }
 
-/* The step marker sits on the track line */
-.state::before {
-  counter-increment: state;
-  content: counter(state);
+.marker {
   position: absolute;
-  top: -0.95rem;
+  top: -1.15rem;
   left: 0;
-  width: 1.6rem;
-  height: 1.6rem;
-  border-radius: 50%;
-  background: var(--senaite-dark);
-  border: 3px solid var(--state-color, var(--senaite-gold));
-  color: #fff;
-  font-size: 0.75rem;
-  font-weight: 600;
-  line-height: 1.05rem;
-  text-align: center;
+  width: 2rem;
+  height: 2.3rem;
+  display: grid;
+  place-items: center;
 }
 
-.state[data-state="sample_due"] { --state-color: #c9a64a; }
-.state[data-state="sample_received"] { --state-color: #5fa8c8; }
-.state[data-state="to_be_verified"] { --state-color: #d98a3a; }
-.state[data-state="verified"] { --state-color: #6cb07f; }
-.state[data-state="published"] { --state-color: #b9aa88; }
+.marker svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.marker polygon {
+  fill: var(--lifecycle-bg);
+  stroke: var(--state-color);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.markerNumber {
+  position: relative;
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1;
+  color: #fff;
+}
 
 .stateLabel {
   display: block;
@@ -216,7 +230,7 @@
 }
 
 .topicShot:focus-visible {
-  outline: 3px solid var(--senaite-gold);
+  outline: 3px solid var(--senaite-accent);
   outline-offset: 3px;
 }
 
@@ -300,8 +314,8 @@
   background: #141a1a;
 }
 
-[data-theme="dark"] .state::before {
-  background: #141a1a;
+[data-theme="dark"] .lifecycle {
+  --lifecycle-bg: #141a1a;
 }
 
 /* ---------- Narrow screens ---------- */
@@ -327,13 +341,13 @@
 
   .state {
     border-top: 0;
-    border-left: 3px solid var(--state-color, var(--senaite-gold));
-    padding: 0 0 0 1.75rem;
+    border-left: 3px solid var(--state-color);
+    padding: 0 0 0 2rem;
   }
 
-  .state::before {
+  .marker {
     top: 0;
-    left: -0.95rem;
+    left: -1.1rem;
   }
 
   .openSourceGrid {
