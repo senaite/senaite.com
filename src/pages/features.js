@@ -2,11 +2,16 @@ import React from "react";
 import clsx from "clsx";
 import Link from "@docusaurus/Link";
 import Layout from "@theme/Layout";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 import styles from "./features.module.css";
 
 const FEATURES = [
   {
     title: "Sample Management",
+    image: "/img/features/sample-management.webp",
+    alt:
+      "Sample listing with status filters, progress bars and samples"
+      + " from several clients in different states",
     content:
       "Register any sample type from any client in a single unified"
       + " interface. Custom IDs, matrix-specific fields, priority flags"
@@ -14,6 +19,10 @@ const FEATURES = [
   },
   {
     title: "Worksheets",
+    image: "/img/features/worksheets.webp",
+    alt:
+      "Worksheet in transposed layout with a blank, a control and"
+      + " routine samples, each with calcium and magnesium results",
     content:
       "Group analyses across samples and clients into a single working"
       + " batch. Blanks, controls and duplicates sit alongside real"
@@ -21,6 +30,9 @@ const FEATURES = [
   },
   {
     title: "Batches",
+    image: "/img/features/batches.webp",
+    alt:
+      "Samples of the batch Borehole survey 2026 with their states",
     content:
       "Link related samples under a project or client batch for"
       + " collective tracking and reporting. Clients can create batch"
@@ -28,6 +40,10 @@ const FEATURES = [
   },
   {
     title: "Partitions and Aliquots",
+    image: "/img/features/partitions.webp",
+    alt:
+      "Client sample listing with a primary sample expanded to show its"
+      + " two partitions",
     content:
       "Split samples into partitions with different containers, volumes"
       + " and analysis sets. The parent\u2013child relationship is"
@@ -36,6 +52,10 @@ const FEATURES = [
   },
   {
     title: "Profiles and Templates",
+    image: "/img/features/profiles.webp",
+    alt:
+      "Analysis profile Total Hardness listing calcium, magnesium and"
+      + " total hardness with methods, units and prices",
     content:
       "An analysis profile bundles a set of services so that one"
       + " selection adds all required tests. Templates add"
@@ -44,6 +64,9 @@ const FEATURES = [
   },
   {
     title: "Instrument Management",
+    image: "/img/features/instruments.webp",
+    alt:
+      "Instrument listing with type, brand, model and calibration expiry date",
     content:
       "Record calibration certificates and maintenance history for"
       + " each instrument. Results imported from instruments are"
@@ -52,13 +75,21 @@ const FEATURES = [
   },
   {
     title: "Audit Log",
+    image: "/img/features/audit-log.webp",
+    alt:
+      "Audit log of a sample: versions with date, user, remote IP,"
+      + " action, workflow state and changed fields",
     content:
-      "Every action on every record produces an immutable snapshot."
-      + " User, IP address and timestamp are stored. The full history"
-      + " of any object is available for inspection at any time.",
+      "Every change to a record is stored as a snapshot with user,"
+      + " IP address and timestamp. The full history of any object is"
+      + " available for inspection at any time.",
   },
   {
     title: "Calculations",
+    image: "/img/features/calculations.webp",
+    alt:
+      "Calculation Total Hardness with the formula [Ca] + [Mg] and"
+      + " additional Python library functions",
     content:
       "Write formulas that reference results from other analyses,"
       + " interim fields or custom parameters. For advanced cases,"
@@ -66,6 +97,10 @@ const FEATURES = [
   },
   {
     title: "Roles and Permissions",
+    image: "/img/features/roles.webp",
+    alt:
+      "Users and Groups control panel: groups such as Analysts, Lab"
+      + " Clerks and Lab Managers mapped to roles",
     content:
       "Eleven built-in roles with status-aware permission sets: from"
       + " client contact through sampler, analyst and verifier to lab"
@@ -74,6 +109,10 @@ const FEATURES = [
   },
   {
     title: "Client Portal",
+    image: "/img/features/client-portal.webp",
+    alt:
+      "Sample listing of a client contact who sees only the samples of"
+      + " their own client",
     content:
       "Clients log in to submit sample requests, monitor status and"
       + " download published reports. Each client sees only their own"
@@ -81,6 +120,10 @@ const FEATURES = [
   },
   {
     title: "Reports and Publishing",
+    image: "/img/features/reports.webp",
+    alt:
+      "SENAITE Impress publish view with template, paper format and a"
+      + " preview of the analysis report",
     content:
       "SENAITE Impress generates PDF reports with fully customisable"
       + " templates. Reports are reviewed and published to clients in"
@@ -88,6 +131,9 @@ const FEATURES = [
   },
   {
     title: "REST JSON API",
+    image: "/img/features/json-api.webp",
+    alt:
+      "Formatted JSON response of a sample search with paging fields",
     content:
       "Every resource and workflow action is accessible via a"
       + " RESTful JSON API. Build integrations with ERP systems, BI"
@@ -95,10 +141,14 @@ const FEATURES = [
   },
 ];
 
-function FeatureCard({ title, content }) {
+function FeatureCard({ title, content, image, alt }) {
+  const src = useBaseUrl(image);
   return (
     <div className={clsx("col col--4", styles.featureCard)}>
       <div className={styles.featureCardInner}>
+        <a className={styles.featureShot} href={src}>
+          <img src={src} alt={alt} loading="lazy" width="1600" height="1000" />
+        </a>
         <h3>{title}</h3>
         <p>{content}</p>
       </div>

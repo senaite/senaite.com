@@ -43,6 +43,29 @@
   border-color: var(--senaite-border);
 }
 
+.featureShot {
+  display: block;
+  margin: -0.25rem -0.25rem 1.1rem;
+  border: 1px solid var(--senaite-border);
+  border-radius: 4px;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  background: var(--senaite-surface);
+}
+
+.featureShot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+  transition: transform 0.25s;
+}
+
+.featureShot:hover img {
+  transform: scale(1.02);
+}
+
 .featureCardInner h3 {
   font-size: 1rem;
   font-weight: 600;
