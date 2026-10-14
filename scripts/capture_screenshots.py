@@ -1,536 +1,546 @@
 #!/usr/bin/env python3
-"""
-SENAITE Quickstart Screenshot Capture Script
+"""Capture the screenshots of the quickstart guide.
 
-Navigates a running SENAITE instance, creates a fresh sample, walks
-it through the full workflow, and saves screenshots for the quickstart
-documentation.
+Runs the quickstart (docs/02-quickstart.md) against an empty SENAITE
+site, through the web interface, and saves a screenshot at each point
+the guide shows one. The data is the data the guide prescribes, so
+the images match the text.
 
-Prerequisites
--------------
-- Python 3.8+
-- pip install playwright
-- playwright install chromium
-- A running SENAITE instance with demo data installed.
+Start a throwaway container first:
 
-Demo data installation (one-time, run before this script):
-  Open http://localhost:8080/senaite/portal_setup/manage_importSteps
-  and import the senaite.core:default profile, which will trigger
-  the demo data import step.
+    docker run -d --name senaite-shots -p 8090:8080 senaite/senaite:2.x
+    python scripts/capture_screenshots.py --url http://localhost:8090
 
-  Alternatively, trigger it from the ZMI:
-  http://localhost:8080/senaite/portal_setup
-
-Usage
------
-  python scripts/capture_screenshots.py
-  python scripts/capture_screenshots.py --url http://localhost:8080
-  python scripts/capture_screenshots.py --username admin --password admin
-  python scripts/capture_screenshots.py --site mysite
-
-All screenshots are written to docs/quickstart/ relative to this
-script's parent directory.
+The script creates the site if it does not exist yet. Run it against
+a fresh container only: it adds content and does not clean up.
 """
 
 import argparse
 import asyncio
 import datetime
-import sys
+import re
 from pathlib import Path
 
-from playwright.async_api import Browser, Page, async_playwright
-
-
-# ── Paths ──────────────────────────────────────────────────────────────────────
+from playwright.async_api import Page
+from playwright.async_api import async_playwright
 
 SCRIPT_DIR = Path(__file__).parent
 SCREENSHOTS_DIR = SCRIPT_DIR.parent / "docs" / "quickstart"
 
-# ── Defaults ───────────────────────────────────────────────────────────────────
-
-DEFAULT_URL = "http://localhost:8080"
-DEFAULT_SITE = "senaite"
-DEFAULT_USERNAME = "admin"
-DEFAULT_PASSWORD = "admin"
-
-# Demo data ships with "client-1" (Happy Hills, HH)
-CLIENT_ID = "client-1"
-
-# Viewport size used for all screenshots
 VIEWPORT = {"width": 1440, "height": 900}
+TIMEOUT = 30000
+
+LAB_CONTACT = {"Firstname": "Lisa", "Surname": "Chen"}
+
+DEPARTMENT = {
+    "title": "Chemistry",
+    "description": "Analytical chemistry department",
+    "department_id": "CHEM",
+}
+
+CATEGORY = {
+    "title": "Water Chemistry",
+    "description": "Chemical water analyses",
+}
+
+SERVICES = [
+    {"title": "Calcium", "keyword": "Ca"},
+    {"title": "Magnesium", "keyword": "Mg"},
+    {"title": "Total Hardness", "keyword": "THCaCO3"},
+]
+
+RESULTS = ["42", "9", "140"]
+
+SAMPLE_TYPE = {"title": "Water", "prefix": "H2O", "min_volume": "100 ml"}
+
+CLIENT = {"Name": "Happy Hills", "ClientID": "HH"}
+
+CLIENT_CONTACT = {"firstname": "Maria", "surname": "Lopez"}
+CLIENT_CONTACT_EMAIL = "maria.lopez@example.com"
 
 
-# ── Helpers ────────────────────────────────────────────────────────────────────
+class Site:
+    """URLs of the SENAITE site under test."""
 
-def site_url(base: str, site: str, path: str = "") -> str:
-    return f"{base}/{site}/{path.lstrip('/')}"
+    def __init__(self, base, site_id):
+        self.base = base.rstrip("/")
+        self.site_id = site_id
+
+    def url(self, path=""):
+        return "{}/{}/{}".format(self.base, self.site_id, path.lstrip("/"))
 
 
-async def wait_and_screenshot(page: Page, name: str) -> None:
-    """Wait for network idle then save a viewport screenshot."""
+# -- Page helpers -----------------------------------------------------
+
+async def open_page(page: Page, url: str) -> None:
+    """Navigate and wait until the listings have loaded."""
+    await page.goto(url)
     await page.wait_for_load_state("networkidle")
+
+
+async def screenshot(page: Page, name: str) -> None:
+    """Save a viewport screenshot under docs/quickstart/."""
+    await page.wait_for_load_state("networkidle")
+    # Park the pointer, so no hover state or tooltip ends up in the image.
+    await page.mouse.move(0, 0)
+    await page.wait_for_timeout(500)
     dest = SCREENSHOTS_DIR / name
     await page.screenshot(path=str(dest))
-    print(f"  -> {dest.name}")
+    print("  -> {}".format(dest.name))
 
 
-async def dismiss_overlays(page: Page) -> None:
-    """Close any open status messages or popups."""
-    for selector in [
-        "button.close",
-        "[data-dismiss='alert']",
-        ".portalMessage .close",
-    ]:
-        for el in await page.query_selector_all(selector):
-            try:
-                await el.click()
-            except Exception:
-                pass
+async def select_reference(page: Page, name: str, term: str) -> None:
+    """Pick the first match in a reference widget.
 
-
-async def login(
-    page: Page, base: str, site: str, username: str, password: str
-) -> None:
-    print("Logging in...")
-    await page.goto(site_url(base, site, "login"))
+    The widget container carries the field name in data-name. Typing
+    into its search input loads matching records into a table below,
+    and clicking a row selects it.
+    """
+    widget = page.locator('[data-name="\\"{}\\""]'.format(name))
+    search = widget.locator("input[name='query-select-search']")
+    await search.click()
+    await search.fill(term)
+    row = widget.locator("table tbody tr").filter(has_text=term).first
+    await row.wait_for(timeout=TIMEOUT)
+    await row.click()
     await page.wait_for_load_state("networkidle")
+
+
+async def fill_fields(page: Page, prefix: str, values: dict) -> None:
+    """Fill text fields by name, with a name prefix for DX forms."""
+    for key, value in values.items():
+        field = "[name='{}{}']:visible".format(prefix, key)
+        await page.locator(field).first.fill(value)
+
+
+async def save_dx(page: Page) -> None:
+    await page.click("input[name='form.buttons.save']")
+    await page.wait_for_load_state("networkidle")
+
+
+async def save_at(page: Page) -> None:
+    await page.click("input[name='form.button.save']")
+    await page.wait_for_load_state("networkidle")
+
+
+def button_label(label: str):
+    """Match a button by its label.
+
+    Workflow buttons carry a counter badge ("Receive 1"), and the
+    review state filters reuse the words ("Received"), so no letter
+    may follow the label.
+    """
+    return re.compile(r"^\s*{}(?![A-Za-z])".format(re.escape(label)))
+
+
+def find_button(page: Page, label: str):
+    return page.locator(
+        "button:visible", has_text=button_label(label)).first
+
+
+async def click_button(page: Page, label: str) -> None:
+    """Click a listing or workflow button by its visible label."""
+    button = find_button(page, label)
+    await button.wait_for(timeout=TIMEOUT)
+    await button.click()
+    await page.wait_for_load_state("networkidle")
+
+
+async def run_transition(page: Page, label: str) -> None:
+    """Click a workflow button and wait until the listing is done.
+
+    The listing transitions the selected items over ajax and redraws
+    without the button once all of them are done. Leaving the page
+    earlier aborts the remaining ones.
+    """
+    button = find_button(page, label)
+    await button.wait_for(timeout=TIMEOUT)
+    await button.click()
+    await button.wait_for(state="hidden", timeout=120000)
+    await page.wait_for_load_state("networkidle")
+
+
+async def select_first_row(page: Page) -> None:
+    """Tick the first item in a listing."""
+    checkbox = page.locator("table tbody tr input[type='checkbox']").first
+    await checkbox.wait_for(timeout=TIMEOUT)
+    await checkbox.check()
+    await page.wait_for_load_state("networkidle")
+
+
+# -- Site --------------------------------------------------------------
+
+async def site_exists(page: Page, site: Site) -> bool:
+    response = await page.goto(site.url())
+    return response is not None and response.status == 200
+
+
+async def create_site(page: Page, site: Site) -> None:
+    print("Creating site...")
+    await open_page(page, "{}/@@senaite-addsite".format(site.base))
+    await page.fill("input[name='site_id']", site.site_id)
+    await page.fill("input[name='title']", "SENAITE LIMS")
+    await page.click("input[type='submit']")
+    await page.wait_for_load_state("networkidle", timeout=300000)
+
+
+async def login(page: Page, site: Site, username: str,
+                password: str) -> None:
+    """Log in through the form, so every request carries the cookie.
+
+    HTTP basic auth alone is not enough: the site answers some
+    anonymous requests with a redirect to the login form instead of
+    a 401, and the browser then never sends the credentials.
+    """
+    await open_page(page, site.url("login"))
     await page.fill("input[name='__ac_name']", username)
     await page.fill("input[name='__ac_password']", password)
-    await page.click("input[type='submit']")
+    await page.click("#login-form [type='submit'], form [type='submit']")
     await page.wait_for_load_state("networkidle")
 
 
-async def fill_reference_field(
-    page: Page, field_id: str, search_term: str = ""
-) -> None:
+# -- Setup steps -------------------------------------------------------
+
+async def add_lab_contact(page: Page, site: Site) -> None:
+    print("Lab contact...")
+    await open_page(page, site.url(
+        "bika_setup/bika_labcontacts/createObject?type_name=LabContact"))
+    await fill_fields(page, "", LAB_CONTACT)
+    await save_at(page)
+    await open_page(page, site.url("bika_setup/bika_labcontacts"))
+    await screenshot(page, "lab-contacts-listing.png")
+
+
+async def add_department(page: Page, site: Site) -> None:
+    print("Lab department...")
+    await open_page(page, site.url(
+        "setup/departments/++add++Department"))
+    await fill_fields(page, "form.widgets.", DEPARTMENT)
+    await select_reference(
+        page, "form.widgets.manager", LAB_CONTACT["Surname"])
+    await save_dx(page)
+    await open_page(page, site.url("setup/departments"))
+    await screenshot(page, "lab-departments-listing.png")
+
+
+async def add_category(page: Page, site: Site) -> None:
+    print("Analysis category...")
+    await open_page(page, site.url(
+        "setup/analysiscategories/++add++AnalysisCategory"))
+    await fill_fields(page, "form.widgets.", CATEGORY)
+    await select_reference(
+        page, "form.widgets.department", DEPARTMENT["title"])
+    await save_dx(page)
+    await open_page(page, site.url("setup/analysiscategories"))
+    await screenshot(page, "analysis-categories-listing.png")
+
+
+async def add_service(page: Page, site: Site, service: dict) -> None:
+    await open_page(page, site.url(
+        "bika_setup/bika_analysisservices/"
+        "createObject?type_name=AnalysisService"))
+    await page.fill("input[name='title']", service["title"])
+    await page.fill("input[name='Unit']", "mg/L")
+    await page.fill("input[name='Keyword']", service["keyword"])
+    await page.check("input[name='PointOfCapture'][value='lab']")
+    await select_reference(page, "Category", CATEGORY["title"])
+    await select_reference(page, "Department", DEPARTMENT["title"])
+    await save_at(page)
+
+
+async def add_services(page: Page, site: Site) -> None:
+    print("Analysis services...")
+    for service in SERVICES:
+        await add_service(page, site, service)
+    await open_page(page, site.url("bika_setup/bika_analysisservices"))
+    await screenshot(page, "analysis-services-listing.png")
+
+
+async def add_sample_type(page: Page, site: Site) -> None:
+    print("Sample type...")
+    await open_page(page, site.url("setup/sampletypes/++add++SampleType"))
+    await fill_fields(page, "form.widgets.", SAMPLE_TYPE)
+    await save_dx(page)
+    await open_page(page, site.url("setup/sampletypes"))
+    await screenshot(page, "sample-types-listing.png")
+
+
+async def add_client(page: Page, site: Site) -> str:
+    """Add the client and return the URL of its view."""
+    print("Client...")
+    await open_page(page, site.url("clients/createObject?type_name=Client"))
+    await fill_fields(page, "", CLIENT)
+    await save_at(page)
+    await open_page(page, site.url("clients"))
+    await screenshot(page, "clients-listing.png")
+    link = page.locator("table tbody a", has_text=CLIENT["Name"]).first
+    href = await link.get_attribute("href")
+    # The listing links to the client's samples view.
+    return href.split("?")[0].rsplit("/", 1)[0]
+
+
+async def add_client_contact(page: Page, client_url: str) -> None:
+    print("Client contact...")
+    await open_page(page, "{}/contacts".format(client_url))
+    await page.locator("a", has_text="Add").first.click()
+    await page.wait_for_load_state("networkidle")
+    await fill_fields(page, "form.widgets.", CLIENT_CONTACT)
+    await page.locator("a", has_text="Email Telephone Fax").first.click()
+    await page.locator(
+        "input[name^='form.widgets.email']:visible").first.fill(
+            CLIENT_CONTACT_EMAIL)
+    await save_dx(page)
+    await open_page(page, "{}/contacts".format(client_url))
+    await screenshot(page, "client-contacts-listing.png")
+
+
+# -- Sample ------------------------------------------------------------
+
+async def tick_service(page: Page, title: str) -> None:
+    row = page.locator("tr.service", has_text=title).first
+    await row.locator("input[type='checkbox']").first.check()
+
+
+async def expand_category(page: Page, title: str) -> None:
+    """Open a collapsed analysis category in the sample add form."""
+    row = page.locator("tr.category", has_text=title).first
+    if not await row.is_visible():
+        await page.locator("text=Lab Analyses").first.click()
+    await row.click()
+    service = page.locator("tr.service", has_text=SERVICES[0]["title"])
+    await service.first.wait_for(state="visible", timeout=TIMEOUT)
+
+
+async def register_sample(page: Page, client_url: str) -> None:
+    print("Registering the sample...")
+    await open_page(page, "{}/analysisrequests".format(client_url))
+    await screenshot(page, "client-samples-listing.png")
+    await open_page(page, "{}/ar_add?ar_count=1".format(client_url))
+    # The add form preselects the contact when the client has only one.
+    await page.locator("[data-name='\"Contact-0\"']",
+                       has_text=CLIENT_CONTACT["surname"]).wait_for()
+    # Yesterday morning: the form refuses a date after the server's
+    # current time, and the container's clock runs on UTC.
+    sampled = datetime.datetime.now() - datetime.timedelta(days=1)
+    await page.fill("input[name='DateSampled-0-date']",
+                    sampled.strftime("%Y-%m-%d"))
+    await page.fill("input[name='DateSampled-0-time']", "09:00")
+    await select_reference(page, "SampleType-0", SAMPLE_TYPE["title"])
+    await expand_category(page, CATEGORY["title"])
+    for service in SERVICES:
+        await tick_service(page, service["title"])
+    await page.wait_for_load_state("networkidle")
+    await page.evaluate("window.scrollTo(0, 0)")
+    await screenshot(page, "sample-add-form.png")
+    await page.click("input[name='save_button']")
+    await page.wait_for_url(lambda url: "ar_add" not in url)
+    await show_listing(page, client_url, "Sample due",
+                       "sample-listing-sample-due.png")
+
+
+async def sample_url(page: Page, client_url: str) -> str:
+    """Return the URL of the one sample of the client."""
+    await open_page(page, "{}/analysisrequests".format(client_url))
+    link = page.locator(
+        "table tbody tr a[href*='/{}-']".format(SAMPLE_TYPE["prefix"]))
+    await link.first.wait_for(timeout=TIMEOUT)
+    href = await link.first.get_attribute("href")
+    return href.split("?")[0]
+
+
+async def select_all_analyses(page: Page) -> None:
+    """Tick the select-all box of the analyses listing."""
+    box = page.locator("input[name='select_all']").last
+    await box.wait_for()
+    if not await box.is_checked():
+        await box.check()
+    await page.wait_for_load_state("networkidle")
+
+
+async def scroll_to_analyses(page: Page) -> None:
+    heading = page.locator("h3, h2", has_text="Analyses").first
+    await heading.evaluate("el => window.scrollTo(0, "
+                           "el.getBoundingClientRect().top "
+                           "+ window.scrollY - 20)")
+
+
+async def open_samples(page: Page, client_url: str, state: str) -> None:
+    """Open the client's samples once the sample shows `state`.
+
+    Transitions finish in the background after the button returns,
+    so the listing is reloaded until the state column has caught up.
     """
-    Fill a SENAITE QuerySelectWidget (React-based reference field).
-
-    The widget root is a <div id="{field_id}"> that React mounts into.
-    It renders:
-      .queryselectwidget-search-field input  — the visible search input
-      .queryselectwidget-results-container   — the results dropdown
-
-    Focusing the input fires an AJAX search; the first <tr> in the
-    results container is clicked to select the value.
-    """
-    search_input = f"#{field_id} .queryselectwidget-search-field input"
-    first_result = (
-        f"#{field_id} .queryselectwidget-results-container tr:first-child"
-    )
-
-    await page.click(search_input)
-    if search_term:
-        await page.type(search_input, search_term)
-
-    await page.wait_for_selector(first_result, timeout=10000)
-    await page.click(first_result)
-    await page.wait_for_load_state("networkidle")
-
-
-# ── Setup screens ──────────────────────────────────────────────────────────────
-
-async def capture_setup_screens(
-    page: Page, base: str, site: str
-) -> None:
-    print("Capturing setup screens...")
-
-    # LIMS Setup main screen
-    await page.goto(site_url(base, site, "@@lims-setup"))
-    await wait_and_screenshot(page, "setup-screen.png")
-
-    # Lab Departments
-    await page.goto(site_url(base, site, "setup/departments"))
-    await wait_and_screenshot(page, "lab-departments-listing.png")
-
-    # Analysis Categories
-    await page.goto(site_url(base, site, "setup/analysiscategories"))
-    await wait_and_screenshot(page, "analysis-categories-listing.png")
-
-    # Analysis Services — try new path first, fall back to old
-    try:
-        await page.goto(
-            site_url(base, site, "setup/analysisservices"),
-            wait_until="networkidle",
-        )
-        if "analysisservices" not in page.url:
-            raise Exception("redirect away from expected URL")
-    except Exception:
-        await page.goto(
-            site_url(
-                base, site,
-                "bika_setup/bika_analysisservices",
-            )
-        )
-    await wait_and_screenshot(page, "analysis-services-listing.png")
-
-    # Sample Types
-    await page.goto(site_url(base, site, "setup/sampletypes"))
-    await wait_and_screenshot(page, "sample-types-listing.png")
-
-
-# ── Client screens ─────────────────────────────────────────────────────────────
-
-async def capture_client_screens(
-    page: Page, base: str, site: str
-) -> None:
-    print("Capturing client screens...")
-
-    # Clients listing
-    await page.goto(site_url(base, site, "clients"))
-    await wait_and_screenshot(page, "clients-listing.png")
-
-    client_base = site_url(base, site, f"clients/{CLIENT_ID}")
-
-    # Contacts tab
-    await page.goto(f"{client_base}/contacts")
-    await wait_and_screenshot(page, "client-contacts-listing.png")
-
-    # Samples tab — demo data client-1 uses analysisrequests
-    await page.goto(f"{client_base}/analysisrequests")
-    await wait_and_screenshot(page, "client-samples-listing.png")
-
-
-# ── Sample creation ────────────────────────────────────────────────────────────
-
-async def create_sample(
-    page: Page, base: str, site: str
-) -> str:
-    """
-    Open the sample add form, fill it in, save, and return the
-    URL of the newly created sample.
-    """
-    print("Creating sample...")
-
-    client_base = site_url(base, site, f"clients/{CLIENT_ID}")
-
-    # Navigate to the sample add form (ar_count=1 → single sample)
-    await page.goto(f"{client_base}/ar_add?ar_count=1")
-    await page.wait_for_load_state("networkidle")
-
-    # --- Contact ---
-    # The UIDReferenceField widget renders an input with id "Contact-0"
-    await fill_reference_field(page, "Contact-0", "")
-
-    # --- Date Sampled ---
-    # The datetimewidget renders two visible inputs:
-    #   input[name='DateSampled-0-date']  type="date"  (YYYY-MM-DD)
-    #   input[name='DateSampled-0-time']  type="time"  (HH:MM)
-    # The input[name='DateSampled-0'] is hidden and must not be filled.
-    now = datetime.datetime.now()
-    await page.fill(
-        "input[name='DateSampled-0-date']",
-        now.strftime("%Y-%m-%d"),
-    )
-    await page.fill(
-        "input[name='DateSampled-0-time']",
-        now.strftime("%H:%M"),
-    )
-
-    # --- Sample Type ---
-    # Type a space to trigger autocomplete showing all types, then pick the
-    # first result. Adjust the search string if you want a specific type.
-    await fill_reference_field(page, "SampleType-0", "")
-
-    # --- Analyses ---
-    # Checkboxes have class "analysisservice-cb-0" but are hidden by CSS.
-    # Click via JavaScript to bypass visibility and fire change handlers.
-    await page.evaluate("""() => {
-        const cbs = document.querySelectorAll(".analysisservice-cb-0");
-        for (let i = 0; i < Math.min(3, cbs.length); i++) {
-            cbs[i].click();
-        }
-    }""")
-    await page.wait_for_load_state("networkidle")
-
-    # Screenshot of the filled form
-    await wait_and_screenshot(page, "sample-add-form.png")
-
-    # Save the form — try several common SENAITE button variants
-    save_btn = await page.query_selector(
-        "input[value='Save'], "
-        "input[value='save'], "
-        "button:has-text('Save'), "
-        "input[type='submit']"
-    )
-    if save_btn is None:
-        # Log available buttons to help diagnose selector mismatches
-        buttons = await page.evaluate("""() => {
-            const els = document.querySelectorAll(
-                "input[type='submit'], button[type='submit'], button"
-            );
-            return Array.from(els).map(
-                e => e.tagName + ' value=' + (e.value || '')
-                     + ' text=' + e.textContent.trim().slice(0, 40)
-            );
-        }""")
-        print("  Available buttons:", buttons, file=sys.stderr)
-        raise RuntimeError(
-            "Could not find Save button on sample add form."
-        )
-    await save_btn.click()
-    await page.wait_for_load_state("networkidle")
-
-    # We land on the samples listing; wait for rows then capture
-    await wait_for_listing_rows(page)
-    await wait_and_screenshot(page, "sample-listing-sample-due.png")
-
-    # Return the URL of the first sample row so we can open it later.
-    # Sample links have no _authenticator parameter; nav tabs do.
-    debug_info = await page.evaluate("""() => {
-        const allLinks = Array.from(
-            document.querySelectorAll("a[href]")
-        ).map(a => a.href).filter(
-            h => !h.includes("_authenticator")
-              && !h.includes("@@")
-              && !h.includes("/++")
-              && h.includes("/senaite/")
-        );
-        const checkboxes = Array.from(
-            document.querySelectorAll("input[type='checkbox']")
-        ).map(cb => ({id: cb.id, name: cb.name, cls: cb.className}));
-        return {links: allLinks, checkboxes: checkboxes.slice(0, 5)};
-    }""")
-    print("  Non-nav links:", debug_info["links"][:10], file=sys.stderr)
-    print("  Checkboxes:", debug_info["checkboxes"], file=sys.stderr)
-
-    # Try direct sample URL patterns first
-    sample_link = await page.query_selector(
-        "table tbody tr:first-child td a[href*='/H'],"
-        "table tbody tr:first-child td a[href*='/AR'],"
-        "tr:first-child td a[href*='/H'],"
-        "tr:first-child td a[href*='/AR'],"
-        "tr:nth-child(2) td a"
-    )
-    if sample_link:
-        return await sample_link.get_attribute("href")
-    # Fall back: first non-nav link on the page
-    for href in debug_info["links"]:
-        # Skip client root and known sub-collections
-        skip = (
-            "analysisrequests" in href
-            or "contacts" in href
-            or "batches" in href
-            or href.rstrip("/").endswith("client-1")
-            or "login" in href
-        )
-        if not skip:
-            return href
-    return ""
-
-
-# ── Sample workflow ────────────────────────────────────────────────────────────
-
-async def wait_for_listing_rows(page: Page, timeout: int = 15000) -> None:
-    """Wait for the senaite.app.listing React table to populate rows."""
-    await page.wait_for_selector(
-        "table tbody tr td input[type='checkbox']",
-        timeout=timeout,
-    )
-
-
-async def receive_sample(page: Page, client_base: str) -> None:
-    print("  Receive...")
-    await page.goto(f"{client_base}/analysisrequests")
-    await page.wait_for_load_state("networkidle")
-    await wait_for_listing_rows(page)
-
-    # Select the first sample row
-    first_cb = await page.query_selector(
-        "table tbody tr:first-child input[type='checkbox']"
-    )
-    await first_cb.check()
-
-    # Screenshot: listing with Receive button visible
-    await wait_and_screenshot(page, "sample-listing-receive.png")
-
-    # Click Receive
-    receive_btn = await page.query_selector(
-        "button:has-text('Receive'), input[value='Receive']"
-    )
-    await receive_btn.click()
-    await page.wait_for_load_state("networkidle")
-    await dismiss_overlays(page)
-
-    # Screenshot: listing after receive
-    await wait_and_screenshot(page, "sample-listing-received.png")
-
-
-async def submit_results(page: Page, sample_url: str) -> None:
-    print("  Submit results...")
-    await page.goto(sample_url)
-    await page.wait_for_load_state("networkidle")
-
-    # Enter a numeric result for each visible result input
-    result_inputs = await page.query_selector_all(
-        "input[id*='Result'][type='text'], "
-        "input[class*='form-control'][name*='Result']"
-    )
-    for i, inp in enumerate(result_inputs):
-        await inp.fill(str(10 + i * 5))
-
-    # Save first so recalculations run, then screenshot, then submit
-    save_btn = await page.query_selector(
-        "button:has-text('Save'), input[value='Save']"
-    )
-    if save_btn:
-        await save_btn.click()
-        await page.wait_for_load_state("networkidle")
-
-    # Reload to get updated state before submitting
-    await page.goto(sample_url)
-    await page.wait_for_load_state("networkidle")
-
-    # Screenshot: sample view with results entered and Submit button visible
-    await wait_and_screenshot(page, "sample-view-submit-results.png")
-
-    # Submit all results
-    submit_btn = await page.query_selector(
-        "button:has-text('Submit'), input[value='Submit']"
-    )
-    await submit_btn.click()
-    await page.wait_for_load_state("networkidle")
-    await dismiss_overlays(page)
-
-
-async def capture_to_be_verified(
-    page: Page, client_base: str
-) -> None:
-    print("  To be verified listing...")
-    await page.goto(f"{client_base}/analysisrequests")
-    await page.wait_for_load_state("networkidle")
-    await wait_for_listing_rows(page)
-    await wait_and_screenshot(page, "sample-listing-to-be-verified.png")
-
-
-async def verify_results(page: Page, sample_url: str) -> None:
-    print("  Verify...")
-    await page.goto(sample_url)
-    await page.wait_for_load_state("networkidle")
-
-    # Screenshot: sample view with Verify button
-    await wait_and_screenshot(page, "sample-view-verify-results.png")
-
-    verify_btn = await page.query_selector(
-        "button:has-text('Verify'), input[value='Verify']"
-    )
-    await verify_btn.click()
-    await page.wait_for_load_state("networkidle")
-    await dismiss_overlays(page)
-
-
-async def capture_verified(page: Page, client_base: str) -> None:
-    print("  Verified listing...")
-    await page.goto(f"{client_base}/analysisrequests")
-    await page.wait_for_load_state("networkidle")
-    await wait_for_listing_rows(page)
-    await wait_and_screenshot(page, "sample-listing-verified.png")
-
-
-async def publish_sample(
-    page: Page, client_base: str
-) -> None:
-    print("  Publish...")
-    await page.goto(f"{client_base}/analysisrequests")
-    await page.wait_for_load_state("networkidle")
-    await wait_for_listing_rows(page)
-
-    # Select the first sample
-    first_cb = await page.query_selector(
-        "table tbody tr:first-child input[type='checkbox']"
-    )
-    await first_cb.check()
-
-    # Screenshot: listing with Publish button visible
-    await wait_and_screenshot(page, "sample-listing-publish.png")
-
-    publish_btn = await page.query_selector(
-        "button:has-text('Publish'), input[value='Publish']"
-    )
-    await publish_btn.click()
-    await page.wait_for_load_state("networkidle")
-
-    # Impress report preview
-    await wait_and_screenshot(page, "senaite-impress-preview.png")
-
-    # Save/Email button row in Impress
-    save_email_row = await page.query_selector(
-        ".impress-controls, .btn-toolbar, "
-        "div:has(button:has-text('Save')):has(button:has-text('Email'))"
-    )
-    if save_email_row:
-        await save_email_row.scroll_into_view_if_needed()
-    await wait_and_screenshot(page, "senaite-impress-save-email.png")
-
-
-# ── Main ───────────────────────────────────────────────────────────────────────
-
-async def run(
-    base: str, site: str, username: str, password: str
-) -> None:
-    SCREENSHOTS_DIR.mkdir(parents=True, exist_ok=True)
-
-    async with async_playwright() as pw:
-        browser: Browser = await pw.chromium.launch(headless=True)
-        context = await browser.new_context(viewport=VIEWPORT)
-        page = await context.new_page()
-
-        await login(page, base, site, username, password)
-        await capture_setup_screens(page, base, site)
-        await capture_client_screens(page, base, site)
-
-        client_base = site_url(base, site, f"clients/{CLIENT_ID}")
-        sample_url = await create_sample(page, base, site)
-
-        if not sample_url:
-            print(
-                "ERROR: could not determine sample URL after creation.\n"
-                "  Check that the sample listing anchor selector matches\n"
-                "  the actual sample ID pattern in your SENAITE instance.",
-                file=sys.stderr,
-            )
-            await browser.close()
+    cell = re.compile(r"^\s*{}\s*$".format(re.escape(state)))
+    row = page.locator("table tbody td", has_text=cell).first
+    for _attempt in range(15):
+        await open_page(page, "{}/analysisrequests".format(client_url))
+        await page.locator("table tbody tr").first.wait_for()
+        if await row.is_visible():
             return
+        await page.wait_for_timeout(2000)
+    raise RuntimeError("Sample never reached state {!r}".format(state))
 
-        await receive_sample(page, client_base)
-        await submit_results(page, sample_url)
-        await capture_to_be_verified(page, client_base)
-        await verify_results(page, sample_url)
-        await capture_verified(page, client_base)
-        await publish_sample(page, client_base)
 
+async def show_listing(page: Page, client_url: str, state: str,
+                       name: str) -> None:
+    await open_samples(page, client_url, state)
+    await screenshot(page, name)
+
+
+async def receive(page: Page, client_url: str) -> None:
+    print("Receive...")
+    await open_page(page, "{}/analysisrequests".format(client_url))
+    await select_first_row(page)
+    await screenshot(page, "sample-listing-receive.png")
+    await run_transition(page, "Receive")
+    await show_listing(
+        page, client_url, "Received", "sample-listing-received.png")
+
+
+async def submit(page: Page, url: str, client_url: str) -> None:
+    print("Submit...")
+    await open_page(page, url)
+    inputs = page.locator("table input[type='text'][name^='Result']")
+    await inputs.first.wait_for(timeout=TIMEOUT)
+    for index, value in enumerate(RESULTS):
+        await inputs.nth(index).click()
+        await inputs.nth(index).press_sequentially(value)
+        await inputs.nth(index).press("Tab")
+        # Leaving a result field refreshes the row over ajax.
+        await page.wait_for_load_state("networkidle")
+        await page.wait_for_timeout(500)
+    # Save stores the results; only then does Submit appear.
+    await click_button(page, "Save")
+    await select_all_analyses(page)
+    await find_button(page, "Submit").wait_for()
+    await scroll_to_analyses(page)
+    await screenshot(page, "sample-view-submit-results.png")
+    await run_transition(page, "Submit")
+    await show_listing(page, client_url, "To be verified",
+                       "sample-listing-to-be-verified.png")
+
+
+async def allow_self_verification(page: Page, site: Site) -> None:
+    """The quickstart runs as one user, who also verifies.
+
+    Real labs keep this off and verify with a second user.
+    """
+    await open_page(page, site.url("setup/edit"))
+    await page.click("#analyses-tab")
+    await page.check(
+        "input[name='form.widgets.self_verification_enabled:list']")
+    await save_dx(page)
+
+
+async def verify(page: Page, url: str, client_url: str) -> None:
+    print("Verify...")
+    await open_page(page, url)
+    await select_all_analyses(page)
+    await find_button(page, "Verify").wait_for()
+    await scroll_to_analyses(page)
+    await screenshot(page, "sample-view-verify-results.png")
+    await run_transition(page, "Verify")
+    await show_listing(
+        page, client_url, "Verified", "sample-listing-verified.png")
+
+
+async def publish_preview(page: Page, client_url: str) -> None:
+    print("Publish preview...")
+    await open_samples(page, client_url, "Verified")
+    await select_first_row(page)
+    await screenshot(page, "sample-listing-publish.png")
+    await click_button(page, "Publish")
+    await page.wait_for_url("**/publish**", timeout=TIMEOUT)
+    await page.locator(".report").first.wait_for(timeout=TIMEOUT)
+    await screenshot(page, "senaite-impress-preview.png")
+    await screenshot_toolbar(page, "senaite-impress-save-email.png")
+
+
+async def screenshot_toolbar(page: Page, name: str) -> None:
+    """Save the Impress toolbar (template, paper, Email, Save)."""
+    # The deepest element holding both the template selector and the
+    # buttons is the toolbar row.
+    toolbar = page.locator("div", has=page.locator("select")).filter(
+        has=find_button(page, "Save")).last
+    box = await toolbar.bounding_box()
+    clip = {
+        "x": max(box["x"] - 16, 0),
+        "y": max(box["y"] - 16, 0),
+        "width": box["width"] + 32,
+        "height": box["height"] + 32,
+    }
+    await page.screenshot(path=str(SCREENSHOTS_DIR / name), clip=clip)
+    print("  -> {}".format(name))
+
+
+async def publish(page: Page, client_url: str) -> None:
+    """Store the PDF, then publish it from the client's reports."""
+    print("Publish...")
+    await click_button(page, "Save")
+    await page.wait_for_url("**/reports_listing**", timeout=120000)
+    await select_first_row(page)
+    await find_button(page, "Publish").wait_for()
+    await screenshot(page, "report-listing-publish.png")
+    await run_transition(page, "Publish")
+    # Published samples leave the default (active) samples listing,
+    # so the reports listing shows the end state.
+    published = re.compile(r"^\s*Published\s*$")
+    await page.locator("table tbody td", has_text=published).first.wait_for()
+    await screenshot(page, "report-listing-published.png")
+
+
+# -- Main --------------------------------------------------------------
+
+async def run(args) -> None:
+    SCREENSHOTS_DIR.mkdir(parents=True, exist_ok=True)
+    site = Site(args.url, args.site)
+    async with async_playwright() as playwright:
+        browser = await playwright.chromium.launch()
+        # English UI regardless of the machine's language settings.
+        context = await browser.new_context(
+            viewport=VIEWPORT,
+            locale="en-US",
+            extra_http_headers={"Accept-Language": "en-US,en"},
+            http_credentials={
+                "username": args.username,
+                "password": args.password,
+            },
+        )
+        page = await context.new_page()
+        page.set_default_timeout(TIMEOUT)
+
+        if not await site_exists(page, site):
+            await create_site(page, site)
+        await login(page, site, args.username, args.password)
+
+        await open_page(page, site.url("@@lims-setup"))
+        await screenshot(page, "setup-screen.png")
+        await add_lab_contact(page, site)
+        await add_department(page, site)
+        await add_category(page, site)
+        await add_services(page, site)
+        await add_sample_type(page, site)
+        client_url = await add_client(page, site)
+        await add_client_contact(page, client_url)
+        await register_sample(page, client_url)
+        url = await sample_url(page, client_url)
+        await receive(page, client_url)
+        await submit(page, url, client_url)
+        await allow_self_verification(page, site)
+        await verify(page, url, client_url)
+        await publish_preview(page, client_url)
+        await publish(page, client_url)
         await browser.close()
 
-    print(f"\nAll screenshots saved to: {SCREENSHOTS_DIR}")
 
-
-def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(
-        description="Capture SENAITE quickstart screenshots with Playwright"
-    )
-    p.add_argument(
-        "--url",
-        default=DEFAULT_URL,
-        help=f"Base URL of the SENAITE instance (default: {DEFAULT_URL})",
-    )
-    p.add_argument(
-        "--site",
-        default=DEFAULT_SITE,
-        help=f"Plone site id (default: {DEFAULT_SITE})",
-    )
-    p.add_argument(
-        "--username",
-        default=DEFAULT_USERNAME,
-        help=f"Login username (default: {DEFAULT_USERNAME})",
-    )
-    p.add_argument(
-        "--password",
-        default=DEFAULT_PASSWORD,
-        help=f"Login password (default: {DEFAULT_PASSWORD})",
-    )
-    return p.parse_args()
+def parse_args():
+    parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    parser.add_argument("--url", default="http://localhost:8090")
+    parser.add_argument("--site", default="senaite")
+    parser.add_argument("--username", default="admin")
+    parser.add_argument("--password", default="admin")
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
-    args = parse_args()
-    asyncio.run(run(args.url, args.site, args.username, args.password))
+    asyncio.run(run(parse_args()))

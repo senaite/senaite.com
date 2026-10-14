@@ -6,7 +6,7 @@ instance using Playwright.
 ## Prerequisites
 
 - Python 3.8+
-- A running SENAITE instance with demo data installed
+- Docker, for a throwaway SENAITE instance
 
 ## Setup
 
@@ -19,65 +19,55 @@ playwright install chromium
 
 ## capture_screenshots.py
 
-Navigates the SENAITE UI, creates a fresh sample, walks it through the
-full workflow, and writes all screenshots to `docs/quickstart/`.
+Runs the quickstart guide (`docs/02-quickstart.md`) against an empty
+SENAITE site through the web interface and writes a screenshot to
+`docs/quickstart/` at every point the guide shows one. It uses the data
+the guide prescribes, so the images and the text match.
 
 ### Usage
 
+Start a fresh container from the image the Docker guide names, then run
+the script against it:
+
 ```bash
-python scripts/capture_screenshots.py
+docker run -d --name senaite-shots -p 8090:8080 senaite/senaite:2.x
+python scripts/capture_screenshots.py --url http://localhost:8090
+docker rm -f senaite-shots
 ```
 
-All arguments are optional:
+The script creates the `senaite` site if it does not exist yet. It adds
+content and does not clean up, so run it against a fresh container
+every time.
 
 | Argument | Default | Description |
 |---|---|---|
-| `--url` | `http://localhost:8080` | Base URL of the SENAITE instance |
-| `--site` | `senaite` | Plone site id |
+| `--url` | `http://localhost:8090` | Base URL of the instance |
+| `--site` | `senaite` | Site id |
 | `--username` | `admin` | Login username |
 | `--password` | `admin` | Login password |
 
-### Demo data
+The browser runs with an English locale, so the screenshots show the
+English interface whatever the machine's language is.
 
-The script assumes demo data is installed. Demo data provides the client
-"Happy Hills" (id: `client-1`), lab contacts, analysis services, and
-sample types that the script uses for navigation and sample creation.
+### What the script does
 
-To install demo data, open the portal setup in a browser and run the
-`senaite.core:default` import step:
-
-```
-http://localhost:8080/senaite/portal_setup/manage_importSteps
-```
-
-### What the script captures
-
-**Setup screens** — navigates directly to each listing:
-
-| Screenshot | URL |
+| Step | Screenshots |
 |---|---|
-| `setup-screen.png` | `@@lims-setup` |
-| `lab-departments-listing.png` | `setup/departments` |
-| `analysis-categories-listing.png` | `setup/analysiscategories` |
-| `analysis-services-listing.png` | `setup/analysisservices` |
-| `sample-types-listing.png` | `setup/sampletypes` |
-| `clients-listing.png` | `clients` |
-| `client-contacts-listing.png` | `clients/client-1/contacts` |
-| `client-samples-listing.png` | `clients/client-1/analysisrequests` |
+| Open LIMS Setup | `setup-screen.png` |
+| Add the lab contact Lisa Chen | `lab-contacts-listing.png` |
+| Add the department Chemistry (manager Lisa Chen) | `lab-departments-listing.png` |
+| Add the category Water Chemistry | `analysis-categories-listing.png` |
+| Add Calcium, Magnesium, Total Hardness | `analysis-services-listing.png` |
+| Add the sample type Water (prefix H2O) | `sample-types-listing.png` |
+| Add the client Happy Hills (HH) | `clients-listing.png` |
+| Add the client contact Maria Lopez | `client-contacts-listing.png` |
+| Register one sample | `client-samples-listing.png`, `sample-add-form.png`, `sample-listing-sample-due.png` |
+| Receive | `sample-listing-receive.png`, `sample-listing-received.png` |
+| Save and submit results | `sample-view-submit-results.png`, `sample-listing-to-be-verified.png` |
+| Verify | `sample-view-verify-results.png`, `sample-listing-verified.png` |
+| Open the report preview | `sample-listing-publish.png`, `senaite-impress-preview.png`, `senaite-impress-save-email.png` |
+| Save the report and publish it | `report-listing-publish.png`, `report-listing-published.png` |
 
-**Sample workflow** — creates a fresh sample each run and steps through
-every transition:
-
-| Screenshot | Workflow step |
-|---|---|
-| `sample-add-form.png` | Sample add form filled in |
-| `sample-listing-sample-due.png` | After save — Sample Due |
-| `sample-listing-receive.png` | Sample selected, Receive button visible |
-| `sample-listing-received.png` | After Receive — Received |
-| `sample-view-submit-results.png` | Results entered, Submit button visible |
-| `sample-listing-to-be-verified.png` | After Submit — To be verified |
-| `sample-view-verify-results.png` | Verify button visible |
-| `sample-listing-verified.png` | After Verify — Verified |
-| `sample-listing-publish.png` | Sample selected, Publish button visible |
-| `senaite-impress-preview.png` | SENAITE Impress report preview |
-| `senaite-impress-save-email.png` | Impress Save / Email toolbar |
+Before verifying, the script enables self-verification in the setup,
+because it runs as a single user. The guide says the same to readers who
+walk through it alone.
