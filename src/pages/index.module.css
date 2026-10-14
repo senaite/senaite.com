@@ -229,6 +229,15 @@
   width: 100%;
 }
 
+.topicCode {
+  min-width: 0;
+  font-size: 0.85rem;
+}
+
+.topicCode :global(.theme-code-block) {
+  margin-bottom: 0;
+}
+
 .topicShot:focus-visible {
   outline: 3px solid var(--senaite-accent);
   outline-offset: 3px;

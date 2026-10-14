@@ -2,6 +2,7 @@ import React from "react";
 import clsx from "clsx";
 import Link from "@docusaurus/Link";
 import Layout from "@theme/Layout";
+import CodeBlock from "@theme/CodeBlock";
 import styles from "./index.module.css";
 
 // The states a sample passes through in the default workflow, in
@@ -33,6 +34,29 @@ const LIFECYCLE = [
     text: "The report is generated and sent to the client.",
   },
 ];
+
+// A real response from a SENAITE 2.x site, trimmed to the fields a
+// first integration usually reads.
+const API_EXAMPLE = `{
+  "count": 3,
+  "pagesize": 1,
+  "page": 1,
+  "items": [
+    {
+      "id": "BAR-0001",
+      "uid": "6960062448d14893b82fba6dc560f449",
+      "review_state": "published",
+      "getClientTitle": "Klaymore",
+      "getClientID": "KL",
+      "getSampleTypeTitle": "Barley",
+      "getDateSampled": "2026-10-04T09:30:00+00:00",
+      "getDateReceived": "2026-10-14T10:33:54+00:00",
+      "getAnalysesKeywords": ["Moist", "Phos", "DM"],
+      "getProgress": 100
+    }
+  ],
+  "next": "…/analysisrequest?getClientID=KL&limit=1&b_start=1"
+}`;
 
 const TOPICS = [
   {
@@ -107,10 +131,11 @@ const TOPICS = [
     intro:
       "A web application on proven open source infrastructure,"
       + " with a documented API for everything around it.",
-    image: "/img/features/json-api.webp",
-    alt:
-      "A JSON API response in the browser listing a sample with its"
-      + " fields",
+    code: {
+      title: "curl -u user:password $SITE/@@API/senaite/v1/"
+        + "analysisrequest?getClientID=KL&limit=1",
+      body: API_EXAMPLE,
+    },
     points: [
       {
         title: "Permissions on every object",
@@ -272,7 +297,7 @@ function Lifecycle() {
   );
 }
 
-function Topic({ title, intro, image, alt, points, reverse }) {
+function Topic({ title, intro, image, alt, code, points, reverse }) {
   return (
     <section className={styles.topic}>
       <div
@@ -292,9 +317,17 @@ function Topic({ title, intro, image, alt, points, reverse }) {
             ))}
           </dl>
         </div>
-        <a className={styles.topicShot} href={image}>
-          <img src={image} alt={alt} loading="lazy" />
-        </a>
+        {code ? (
+          <div className={styles.topicCode}>
+            <CodeBlock language="json" title={code.title}>
+              {code.body}
+            </CodeBlock>
+          </div>
+        ) : (
+          <a className={styles.topicShot} href={image}>
+            <img src={image} alt={alt} loading="lazy" />
+          </a>
+        )}
       </div>
     </section>
   );
