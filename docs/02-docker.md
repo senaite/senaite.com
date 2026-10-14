@@ -8,7 +8,21 @@ The official SENAITE Docker image provides a fast way to run SENAITE without
 setting up a Python environment or running Buildout. It is well suited for
 evaluation, development and production deployments.
 
-The image is published on [Docker Hub][DOCKERHUB] under `senaite/senaite`.
+The image is published on [Docker Hub][DOCKERHUB] under `senaite/senaite`
+for `amd64` and `arm64`.
+
+
+## Which Tag to Use
+
+- `2.x` is rebuilt from the development branch of `senaite.core` on every
+  change. It shows the current state of SENAITE, including features that
+  are not released yet. It also contains the add-ons `senaite.databox`,
+  `senaite.storage`, `senaite.patient` and `senaite.ldap`. Use it to
+  evaluate and to follow development.
+- `v2.6.0` and `v2.6.0-docker2` contain the latest release, 2.6.0. The
+  `-docker2` tag is the same release rebuilt with a fix for the base
+  image's package sources. Use a version tag when the system must not
+  change under you.
 
 
 ## Prerequisites
@@ -25,13 +39,17 @@ Start a container with the rolling `2.x` image tag:
 docker run --rm --name senaite -p 8080:8080 senaite/senaite:2.x
 ```
 
-Open `http://localhost:8080` in a browser and log in with `admin:admin`.
-Press **Install SENAITE LIMS** to complete the site setup.
+Open `http://localhost:8080` in a browser and click
+**Create a new SENAITE site**. Log in with `admin:admin`, keep the
+suggested site id `senaite` and click **Create SENAITE Site**. The site is
+then available at `http://localhost:8080/senaite`.
 
 The `--rm` flag removes the container when it stops. Data is not persisted
-between runs with this command — see the section below for persistent storage.
+between runs with this command; see the section below for persistent
+storage.
 
-Start in foreground (debug) mode to see log output:
+The container writes its log to the console. To run the instance in debug
+mode instead, which is slower but shows more detail, append `fg`:
 
 ```shell
 docker run --rm --name senaite -p 8080:8080 senaite/senaite:2.x fg
@@ -41,7 +59,7 @@ docker run --rm --name senaite -p 8080:8080 senaite/senaite:2.x fg
 ## Persistent Storage
 
 By default, the database lives inside the container and is lost when the
-container is removed. Mount a host directory to persist data across restarts:
+container is removed. Mount a volume on `/data` to keep it:
 
 ```shell
 docker run -d \
@@ -146,34 +164,46 @@ distribute traffic and handle TLS termination.
 | `SITE` | Create and install a SENAITE site with this ID on first start |
 | `PASSWORD` | Password for the `admin` user (default: `admin`) |
 | `ADDONS` | Space-separated list of additional add-ons to install, e.g. `senaite.storage` |
-| `ZEO_ADDRESS` | `host:port` of the ZEO server — starts the image as a ZEO client |
-| `ZEO_READ_ONLY` | Run as a read-only ZEO client (`off` by default) |
+| `ZEO_ADDRESS` | `host:port` of the ZEO server; starts the image as a ZEO client |
+| `ZEO_READ_ONLY` | Run as a read-only ZEO client (`false` by default) |
 | `ZEO_SHARED_BLOB_DIR` | Set to `on` if ZEO server and client share the same blob directory |
 | `DEVELOP` | Path to a local add-on to mount and develop inside the container |
+
+Setting `SITE`, `PASSWORD`, `ADDONS` or `DEVELOP` makes the container run
+Buildout when it starts for the first time. That needs internet access and
+takes a few minutes before the server answers.
 
 
 ## Installing Add-ons
 
 Pass add-on package names via the `ADDONS` variable. Pin a specific version
-with `==`:
+with `==`. Together with `SITE`, the add-ons are installed into the new
+site; without it, install them afterwards in the site's add-ons control
+panel.
 
 ```shell
 docker run --rm -p 8080:8080 \
-  -e ADDONS="senaite.storage==1.0.0 senaite.patient" \
+  -e SITE=senaite \
+  -e ADDONS="senaite.ast" \
   senaite/senaite:2.x
 ```
+
+The `2.x` image already contains `senaite.databox`, `senaite.storage`,
+`senaite.patient` and `senaite.ldap`.
 
 
 ## Pinning a Specific Version
 
 SENAITE does not publish a `latest` Docker tag. Use the rolling `2.x` tag, or
-replace `2.x` with a specific version tag from [Docker Hub][DOCKERHUB]:
+replace `2.x` with a version tag from [Docker Hub][DOCKERHUB]:
 
 ```shell
-docker run --rm -p 8080:8080 senaite/senaite:v2.6.0
+docker run --rm -p 8080:8080 senaite/senaite:v2.6.0-docker2
 ```
 
-Available tags: `v2.6.0`, `v2.5.0`, `v2.4.1`, `v2.4.0`, `2.x`.
+Version tags: `v2.6.0-docker2`, `v2.6.0`, `v2.5.0-docker2`, `v2.5.0`,
+`v2.4.1`, `v2.4.0`, `v2.3.0`, `v2.2.0`. The `edge` tag is built together
+with `2.x` and currently matches it.
 
 
 ## Further Reading

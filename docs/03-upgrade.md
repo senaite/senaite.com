@@ -21,7 +21,9 @@ carefully for API changes.
 **Strongly recommended steps before proceeding:**
 
 - Test the upgrade on a clone of your production environment first.
-- Run `bin/zeopack` to compact the database before upgrading.
+- Pack the database before upgrading: `bin/zeopack` in a ZEO setup, or
+  **Pack** in the ZMI at `/Control_Panel/Database/main/manage_main` for a
+  single instance.
 - Create a full backup of both `filestorage/` and `blobstorage/`.
 - Bring as many analyses as possible to a verified or published state.
 - Stop any background services that consume significant memory.
@@ -30,15 +32,25 @@ carefully for API changes.
 
 ## Step 1: Update the Version Pin
 
-Open your `buildout.cfg` and update the `senaite.lims` version pin in the
-`[versions]` section:
+Open your `buildout.cfg` and update the version pins in the `[versions]`
+section. The SENAITE packages depend on each other with lower bounds only,
+so pin the whole set to the target release, not only `senaite.lims`:
 
 ```ini
 [versions]
-senaite.lims = 2.x.x   # replace with the target version
+senaite.lims = 2.6.0
+senaite.core = 2.6.0
+senaite.app.listing = 2.6.0
+senaite.app.spotlight = 2.6.0
+senaite.app.supermodel = 2.6.0
+senaite.impress = 2.6.0
+senaite.jsonapi = 2.6.0
 ```
 
-Check the [PyPI history][SENAITE-PYPI] for the latest stable release.
+Check the [PyPI history][SENAITE-PYPI] for the latest stable release. If
+you installed from [senaite.starter][SENAITE-STARTER], compare your pins
+with its current `buildout.cfg`, which also pins the dependencies that a
+new release needs.
 
 
 ## Step 2: Re-run Buildout
@@ -75,7 +87,8 @@ Open a browser and navigate to the portal setup upgrade page:
 http://localhost:8080/senaite/portal_setup/manage_upgrades
 ```
 
-Select the `senaite.core` profile from the dropdown and click **Upgrade**.
+Select the `senaite.core` profile from the dropdown. The page lists the
+pending upgrade steps; keep them all selected and click **Upgrade**.
 
 Repeat for any other profiles that show pending upgrades (for example,
 `senaite.impress`, `senaite.app.listing`, or custom add-on profiles).
@@ -113,10 +126,11 @@ bin/instance start
 ## ZEO Setups
 
 If you run a ZEO cluster, stop all clients before upgrading and run the
-upgrade steps with a single reserved client in foreground mode:
+upgrade steps through a single client started in foreground mode, for
+example:
 
 ```shell
-bin/client_reserved fg
+bin/client1 fg
 ```
 
 Restart the remaining clients only after the upgrade steps have completed
@@ -135,3 +149,4 @@ See the [Enterprise Solutions](/enterprise) page for details.
 
 [SENAITE-PYPI]: https://pypi.org/project/senaite.lims/#history
 [SENAITE-CORE-RELEASES]: https://github.com/senaite/senaite.core/releases
+[SENAITE-STARTER]: https://github.com/senaite/senaite.starter
