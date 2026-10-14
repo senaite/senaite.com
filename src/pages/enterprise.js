@@ -53,7 +53,6 @@ const PROVIDERS = [
 const WHY_CHOOSE = [
   {
     title: "Deep Platform Knowledge",
-    image: "/img/undraw_version_control.svg",
     content:
       "Providers are the authors of SENAITE. They understand the"
       + " codebase thoroughly, know why design decisions were made"
@@ -63,7 +62,6 @@ const WHY_CHOOSE = [
   },
   {
     title: "Laboratory and IT Fluency",
-    image: "/img/undraw_usability_testing.svg",
     content:
       "Successful LIMS implementation requires fluency in both"
       + " laboratory science and software engineering. Providers"
@@ -73,7 +71,6 @@ const WHY_CHOOSE = [
   },
   {
     title: "Defined Delivery Standards",
-    image: "/img/undraw_confirmation.svg",
     content:
       "All code is peer-reviewed before delivery. Automated test"
       + " suites cover the platform and every new feature. The"
@@ -82,7 +79,6 @@ const WHY_CHOOSE = [
   },
   {
     title: "Scoped Project Plans",
-    image: "/img/undraw_organizing_projects.svg",
     content:
       "Every engagement begins with a requirements meeting and a"
       + " formal GAP analysis that establishes exactly what SENAITE"
@@ -92,7 +88,6 @@ const WHY_CHOOSE = [
   },
   {
     title: "Capacity Building",
-    image: "/img/undraw_high_five.svg",
     content:
       "Functional workshops train laboratory staff to use the"
       + " system with confidence and expose edge cases that generic"
@@ -102,7 +97,6 @@ const WHY_CHOOSE = [
   },
   {
     title: "Long-Term Support",
-    image: "/img/undraw_instant_support.svg",
     content:
       "Support contracts cover version updates, security patches,"
       + " system monitoring and corrective actions. The objective is"
@@ -138,14 +132,9 @@ function ProviderCard({ name, logo, tagline, url, description, compact }) {
   );
 }
 
-function WhyCard({ title, image, content }) {
+function WhyCard({ title, content }) {
   return (
     <div className={clsx("col col--4", styles.whyCard)}>
-      {image && (
-        <div className={styles.whyIcon}>
-          <img src={image} alt="" role="presentation" />
-        </div>
-      )}
       <h3>{title}</h3>
       <p>{content}</p>
     </div>
@@ -187,7 +176,7 @@ export default function Enterprise() {
               </p>
             </div>
 
-            {/* Tier 1 — Core Maintainers */}
+            {/* Tier 1: core maintainers */}
             <p className={styles.tierLabel}>Core Maintainers</p>
             <div className="provider-grid">
               {tier1.map((p) => (
@@ -195,7 +184,7 @@ export default function Enterprise() {
               ))}
             </div>
 
-            {/* Tier 2 — Certified Partners */}
+            {/* Tier 2: certified partners */}
             <p className={clsx(styles.tierLabel, styles.tierLabelSpaced)}>
               Certified Partners
             </p>
@@ -229,45 +218,47 @@ export default function Enterprise() {
 
         {/* CTA */}
         <div className="cta-banner">
-          <h2 className="cta-banner__title">
-            Work with the teams who build SENAITE
-          </h2>
-          <p className="cta-banner__subtitle">
-            Providers have experience across clinical, research and
-            environmental laboratories. Contact one directly to
-            discuss your requirements.
-          </p>
-          <div className="cta-banner__buttons">
-            <a
-              href="https://www.ridingbytes.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="button button--primary button--lg"
-            >
-              Contact RIDING BYTES
-            </a>
-            <a
-              href="https://naralabs.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="button button--primary button--lg"
-            >
-              Contact NARALABS
-            </a>
-            <a
-              href="https://yme.rocks/en"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="button button--primary button--lg"
-            >
-              Contact YME
-            </a>
-            <Link
-              className="button button--primary button--lg"
-              to="/docs/installation"
-            >
-              Self-Install Guide
-            </Link>
+          <div className="container">
+            <h2 className="cta-banner__title">
+              Work with the teams who build SENAITE
+            </h2>
+            <p className="cta-banner__subtitle">
+              Providers have experience across clinical, research and
+              environmental laboratories. Contact one directly to
+              discuss your requirements.
+            </p>
+            <div className="cta-banner__buttons">
+              <a
+                href="https://www.ridingbytes.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="button button--primary button--lg"
+              >
+                Contact RIDING BYTES
+              </a>
+              <a
+                href="https://naralabs.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="button button--primary button--lg"
+              >
+                Contact NARALABS
+              </a>
+              <a
+                href="https://yme.rocks/en"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="button button--primary button--lg"
+              >
+                Contact YME
+              </a>
+              <Link
+                className="button button--primary button--lg"
+                to="/docs/installation"
+              >
+                Self-Install Guide
+              </Link>
+            </div>
           </div>
         </div>
       </main>

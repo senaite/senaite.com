@@ -35,8 +35,8 @@ const FEATURES = [
       "Samples of the batch Borehole survey 2026 with their states",
     content:
       "Link related samples under a project or client batch for"
-      + " collective tracking and reporting. Clients can create batch"
-      + " requests directly through the portal.",
+      + " collective tracking and reporting, and publish them"
+      + " together.",
   },
   {
     title: "Partitions and Aliquots",
@@ -69,9 +69,9 @@ const FEATURES = [
       "Instrument listing with type, brand, model and calibration expiry date",
     content:
       "Record calibration certificates and maintenance history for"
-      + " each instrument. Results imported from instruments are"
-      + " validated against active calibration data, and QC tests"
-      + " monitor performance continuously.",
+      + " each instrument. An instrument whose certificate has expired"
+      + " or whose control results fail is marked invalid and cannot"
+      + " take new results until it is fixed.",
   },
   {
     title: "Audit Log",
@@ -102,10 +102,9 @@ const FEATURES = [
       "Users and Groups control panel: groups such as Analysts, Lab"
       + " Clerks and Lab Managers mapped to roles",
     content:
-      "Eleven built-in roles with status-aware permission sets: from"
-      + " client contact through sampler, analyst and verifier to lab"
-      + " manager and regulatory inspector. Custom roles are also"
-      + " supported.",
+      "Built-in roles from client contact through sampler, analyst"
+      + " and verifier to lab manager, with permissions that change"
+      + " with the state of each sample and analysis.",
   },
   {
     title: "Client Portal",
@@ -163,7 +162,7 @@ export default function Features() {
       description={
         "SENAITE covers the complete analytical workflow: sample"
         + " management, worksheets, calculations, audit log, client"
-        + " portal, REST API and more — all included, nothing extra."
+        + " portal, REST API and more, all included."
       }
     >
       {/* Hero */}
@@ -198,27 +197,29 @@ export default function Features() {
 
         {/* CTA */}
         <div className="cta-banner">
-          <h2 className="cta-banner__title">
-            Evaluate SENAITE against your requirements
-          </h2>
-          <p className="cta-banner__subtitle">
-            The installation guide gets you a running system quickly.
-            For a guided evaluation with your actual workflows, talk
-            to a service provider.
-          </p>
-          <div className="cta-banner__buttons">
-            <Link
-              className="button button--primary button--lg"
-              to="/docs/installation"
-            >
-              Installation Guide
-            </Link>
-            <Link
-              className="button button--outline button--secondary button--lg"
-              to="/enterprise"
-            >
-              Professional Services
-            </Link>
+          <div className="container">
+            <h2 className="cta-banner__title">
+              Evaluate SENAITE against your requirements
+            </h2>
+            <p className="cta-banner__subtitle">
+              The installation guide gets you a running system quickly.
+              For a guided evaluation with your actual workflows, talk
+              to a service provider.
+            </p>
+            <div className="cta-banner__buttons">
+              <Link
+                className="button button--primary button--lg"
+                to="/docs/installation"
+              >
+                Installation Guide
+              </Link>
+              <Link
+                className="button button--outline button--secondary button--lg"
+                to="/enterprise"
+              >
+                Professional Services
+              </Link>
+            </div>
           </div>
         </div>
       </main>

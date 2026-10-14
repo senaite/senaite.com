@@ -4,116 +4,156 @@ import Link from "@docusaurus/Link";
 import Layout from "@theme/Layout";
 import styles from "./index.module.css";
 
-const PERFORMANCE_CARDS = [
+// The states a sample passes through in the default workflow, in
+// order. Ids are the workflow state ids of senaite.core 2.x.
+const LIFECYCLE = [
   {
-    title: "Process Automation",
-    image: "/img/undraw_investment.svg",
-    content:
-      "Configure step-by-step workflows that guide analysts through"
-      + " the analytical process. Automated result imports, data"
-      + " validation rules and transition constraints eliminate"
-      + " repetitive manual tasks.",
+    id: "sample_due",
+    label: "Due",
+    text: "Registered and expected in the lab.",
   },
   {
-    title: "Instrument Integration",
-    image: "/img/undraw_solution_mindset.svg",
-    content:
-      "Connect directly to laboratory instruments using built-in"
-      + " interfaces. Results are imported automatically, removing the"
-      + " transcription step and the errors that come with it.",
+    id: "sample_received",
+    label: "Received",
+    text: "Arrived and checked in. Results can be entered.",
   },
   {
-    title: "Turnaround Time",
-    image: "/img/undraw_done_checking.svg",
-    content:
-      "Set priorities and due dates on individual analyses. Daily work"
-      + " is planned through worksheets, and overdue tests are visible"
-      + " at a glance.",
-  },
-];
-
-const CONTROL_CARDS = [
-  {
-    title: "ISO/IEC 17025 Ready",
-    image: "/img/undraw_process.svg",
-    content:
-      "SENAITE supports the process controls required for ISO/IEC"
-      + "\u00a017025 accreditation when deployed and operated in a"
-      + " suitable infrastructure.",
+    id: "to_be_verified",
+    label: "To be verified",
+    text: "All results submitted, waiting for a second person.",
   },
   {
-    title: "Audit and Traceability",
-    image: "/img/undraw_done.svg",
-    content:
-      "Every change to an electronic record creates an immutable"
-      + " snapshot. User name, IP address and timestamp are captured"
-      + " automatically. Nothing can be altered without trace.",
+    id: "verified",
+    label: "Verified",
+    text: "Every result confirmed by someone other than the analyst.",
   },
   {
-    title: "Data Insights",
-    image: "/img/undraw_all_the_data.svg",
-    content:
-      "The built-in dashboard shows laboratory throughput across"
-      + " daily, weekly, monthly and annual intervals. External BI"
-      + " tools connect through the REST JSON API.",
+    id: "published",
+    label: "Published",
+    text: "The report is generated and sent to the client.",
   },
 ];
 
-const TECHNOLOGY_CARDS = [
+const TOPICS = [
   {
-    title: "Proven Security",
-    image: "/img/undraw_security.svg",
-    content:
-      "Built on Plone, which holds the best security track record of"
-      + " any major CMS. Role-based access control and a strict state"
-      + " machine prevent unauthorised modification of electronic"
-      + " records.",
+    title: "Less manual work",
+    intro:
+      "The bench works from worksheets, results arrive from"
+      + " instruments, and the workflow only offers the next step"
+      + " when it is allowed.",
+    image: "/img/features/worksheets.webp",
+    alt:
+      "A SENAITE worksheet with sample analyses, a blank, a control"
+      + " and a duplicate in their positions",
+    points: [
+      {
+        title: "Guided workflow",
+        text:
+          "Every sample and analysis follows a defined lifecycle."
+          + " Transitions appear only when their conditions are met,"
+          + " so steps cannot be skipped by accident.",
+      },
+      {
+        title: "Instrument results",
+        text:
+          "Results are imported from the files your instruments"
+          + " export instead of being typed in, which removes a"
+          + " transcription step and its errors.",
+      },
+      {
+        title: "Turnaround time",
+        text:
+          "Each analysis has a due date. Worksheets plan the work at"
+          + " the bench, and late analyses stand out in the listings.",
+      },
+    ],
   },
   {
-    title: "Reliable Architecture",
-    image: "/img/undraw_deliveries.svg",
-    content:
-      "Runs on Linux with standard web server infrastructure. Load"
-      + " balancers, reverse proxies and virtualisation are all"
-      + " supported. The architecture scales with your laboratory.",
+    title: "Under control",
+    intro:
+      "Who changed what, and when, is recorded on the object itself."
+      + " Verification by a second person is built into the workflow.",
+    image: "/img/features/audit-log.webp",
+    alt:
+      "The audit log of a sample with versions, users, timestamps"
+      + " and the changed fields",
+    points: [
+      {
+        title: "Ready for ISO/IEC 17025",
+        text:
+          "SENAITE supports the process controls an accredited"
+          + " laboratory needs. The accreditation itself stays with"
+          + " the laboratory and how it runs the system.",
+      },
+      {
+        title: "Audit trail",
+        text:
+          "Every edit of a sample, an analysis or a setup object"
+          + " stores a snapshot with the user, the time and the"
+          + " changed fields. A lab wide audit log can be switched on"
+          + " in the setup.",
+      },
+      {
+        title: "Dashboard and data access",
+        text:
+          "The dashboard shows throughput over days, weeks and"
+          + " months. Reporting and BI tools read the same data"
+          + " through the JSON API.",
+      },
+    ],
   },
   {
-    title: "Browser-Based",
-    image: "/img/undraw_goals.svg",
-    content:
-      "No desktop software to install or maintain. Centralised"
-      + " deployment gives IT full control and any device with a"
-      + " browser can access the system.",
+    title: "Built to run for years",
+    intro:
+      "A web application on proven open source infrastructure,"
+      + " with a documented API for everything around it.",
+    image: "/img/features/json-api.webp",
+    alt:
+      "A JSON API response in the browser listing a sample with its"
+      + " fields",
+    points: [
+      {
+        title: "Permissions on every object",
+        text:
+          "Roles and workflow states decide who may see or change"
+          + " what, and at which point in the process.",
+      },
+      {
+        title: "Standard infrastructure",
+        text:
+          "Runs on Linux behind a regular web server or reverse"
+          + " proxy. Several application processes can share one"
+          + " database server as the lab grows.",
+      },
+      {
+        title: "In the browser",
+        text:
+          "No desktop software to install or update. Any device with"
+          + " a browser works, and IT keeps one central installation.",
+      },
+    ],
   },
 ];
 
-const OPEN_SOURCE_CARDS = [
+const OPEN_SOURCE = [
   {
-    title: "No License Fees",
-    image: "/img/undraw_invest.svg",
-    content:
-      "The cost shifts from recurring license fees to implementation"
-      + " and customisation — a capital expense that builds real"
-      + " capability rather than renting access to a black box.",
+    title: "No license fees",
+    text:
+      "Budget goes into configuration and integration for your lab,"
+      + " not into licenses that renew every year.",
   },
   {
-    title: "Reliability and Transparency",
-    image: "/img/undraw_heatmap.svg",
-    content:
-      "Open source software is subject to worldwide scrutiny. Research"
-      + " consistently shows it matches or exceeds proprietary"
-      + " alternatives on reliability and security. The source code"
-      + " is always available for audit.",
+    title: "Open to review",
+    text:
+      "The complete source code is public. Your IT and your auditors"
+      + " can read exactly what runs in your network.",
   },
   {
-    title: "An Investment That Compounds",
-    image: "/img/undraw_predictive_analytics.svg",
-    content:
-      "Every workflow, configuration and integration built on SENAITE"
-      + " is owned outright by the organisation. The work accumulates"
-      + " as institutional knowledge and capability — unlike proprietary"
-      + " systems where costs continue indefinitely and switching"
-      + " remains expensive.",
+    title: "Yours to keep",
+    text:
+      "Workflows, configuration and extensions built on SENAITE"
+      + " belong to your organisation, and so does the decision who"
+      + " supports them.",
   },
 ];
 
@@ -150,198 +190,186 @@ const TRUSTED_BY = [
   },
 ];
 
-function FeatureCard({ title, image, content }) {
-  return (
-    <div className={clsx("col col--4", styles.featureCard)}>
-      {image && (
-        <div className="feature-card__icon">
-          <img src={image} alt="" role="presentation" />
-        </div>
-      )}
-      <h3 className="feature-card__title">{title}</h3>
-      <p>{content}</p>
-    </div>
-  );
-}
-
-function Section({ title, subtitle, children, grey, dark }) {
-  return (
-    <section
-      className={clsx("senaite-section", {
-        "senaite-section--grey": grey,
-        "senaite-section--dark": dark,
-      })}
-    >
-      <div className="container">
-        <div className="senaite-section__header">
-          <h2 className="senaite-section__title">{title}</h2>
-          {subtitle && (
-            <p className="senaite-section__subtitle">{subtitle}</p>
-          )}
-        </div>
-        {children}
-      </div>
-    </section>
-  );
-}
-
 function HeroBanner() {
   return (
     <header className={styles.hero}>
-      <div className="container">
-        <img
-          src="/img/senaite_product_logo_text.svg"
-          alt="SENAITE"
-          className={styles.heroLogo}
-        />
-        <p className={styles.heroTagline}>
-          Open source LIMS for serious laboratories
-        </p>
-        <p className={styles.heroSubtitle}>
-          From sample intake to published report, SENAITE covers the
-          complete analytical workflow — free to use, free to extend.
-        </p>
-        <div className={styles.heroButtons}>
-          <Link
-            className="button button--primary button--lg"
-            to="/docs/installation"
-          >
-            Get Started
-          </Link>
-          <Link
-            className="button button--secondary button--lg"
-            to="/enterprise"
-          >
-            Professional Services
-          </Link>
+      <div className={clsx("container", styles.heroGrid)}>
+        <div className={styles.heroText}>
+          <h1 className={styles.heroTitle}>
+            The open source LIMS, from sample intake to published report
+          </h1>
+          <p className={styles.heroSubtitle}>
+            SENAITE manages samples, analyses, worksheets, instruments
+            and reports for testing laboratories. Free to use, free to
+            extend, and the code is yours.
+          </p>
+          <div className={styles.heroButtons}>
+            <Link
+              className="button button--primary button--lg"
+              to="/docs/installation"
+            >
+              Install SENAITE
+            </Link>
+            <Link
+              className="button button--secondary button--lg"
+              to="/enterprise"
+            >
+              Find a service provider
+            </Link>
+          </div>
         </div>
+        <figure className={styles.heroShot}>
+          <div className={styles.browserBar} aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </div>
+          <img
+            src="/img/features/sample-management.webp"
+            alt={
+              "The SENAITE sample listing with samples in different"
+              + " states, their clients, sample types and due dates"
+            }
+          />
+        </figure>
       </div>
     </header>
   );
 }
 
-function PerformanceSection() {
+function Lifecycle() {
   return (
-    <Section
-      title="Performance"
-      subtitle="Less manual work, faster results"
-    >
-      <div className="row">
-        {PERFORMANCE_CARDS.map((card) => (
-          <FeatureCard key={card.title} {...card} />
-        ))}
+    <section className={styles.lifecycle}>
+      <div className="container">
+        <h2 className={styles.lifecycleTitle}>
+          How a sample moves through SENAITE
+        </h2>
+        <ol className={styles.lifecycleTrack}>
+          {LIFECYCLE.map(({ id, label, text }) => (
+            <li key={id} className={styles.state} data-state={id}>
+              <span className={styles.stateLabel}>{label}</span>
+              <code className={styles.stateId}>{id}</code>
+              <p className={styles.stateText}>{text}</p>
+            </li>
+          ))}
+        </ol>
       </div>
-    </Section>
+    </section>
   );
 }
 
-function ControlSection() {
+function Topic({ title, intro, image, alt, points, reverse }) {
   return (
-    <Section
-      title="Control"
-      subtitle={
-        "Complete visibility over every step of the"
-        + " analytical process"
-      }
-      grey
-    >
-      <div className="row">
-        {CONTROL_CARDS.map((card) => (
-          <FeatureCard key={card.title} {...card} />
-        ))}
+    <section className={styles.topic}>
+      <div
+        className={clsx("container", styles.topicGrid, {
+          [styles.topicReverse]: reverse,
+        })}
+      >
+        <div className={styles.topicText}>
+          <h2 className={styles.topicTitle}>{title}</h2>
+          <p className={styles.topicIntro}>{intro}</p>
+          <dl className={styles.points}>
+            {points.map((point) => (
+              <div key={point.title} className={styles.point}>
+                <dt>{point.title}</dt>
+                <dd>{point.text}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+        <a className={styles.topicShot} href={image}>
+          <img src={image} alt={alt} loading="lazy" />
+        </a>
       </div>
-    </Section>
-  );
-}
-
-function TechnologySection() {
-  return (
-    <Section
-      title="Technology"
-      subtitle="A stack built for production — today and ten years from now"
-    >
-      <div className="row">
-        {TECHNOLOGY_CARDS.map((card) => (
-          <FeatureCard key={card.title} {...card} />
-        ))}
-      </div>
-    </Section>
+    </section>
   );
 }
 
 function OpenSourceSection() {
   return (
-    <Section
-      title="Open Source"
-      subtitle="No license fees. No vendor lock-in. Full access to the source code."
-      grey
-    >
-      <div className="row">
-        {OPEN_SOURCE_CARDS.map((card) => (
-          <FeatureCard key={card.title} {...card} />
-        ))}
+    <section className={styles.openSource}>
+      <div className="container">
+        <div className={styles.openSourceHead}>
+          <h2 className={styles.topicTitle}>Open source, GPLv2</h2>
+          <p className={styles.topicIntro}>
+            No license fees, no vendor lock-in, full access to the
+            source code on{" "}
+            <a href="https://github.com/senaite">GitHub</a>.
+          </p>
+        </div>
+        <dl className={styles.openSourceGrid}>
+          {OPEN_SOURCE.map((point) => (
+            <div key={point.title} className={styles.point}>
+              <dt>{point.title}</dt>
+              <dd>{point.text}</dd>
+            </div>
+          ))}
+        </dl>
       </div>
-    </Section>
+    </section>
   );
 }
 
 function TrustedBySection() {
   return (
-    <Section
-      title="Trusted By"
-      subtitle={
-        "Used in diagnostic laboratories, research centres and"
-        + " public health programmes worldwide"
-      }
-    >
-      <div className="trusted-logos">
-        {TRUSTED_BY.map(({ name, image, url }) =>
-          url ? (
-            <a
-              key={name}
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              title={name}
-            >
-              <img src={image} alt={name} />
-            </a>
-          ) : (
-            <span key={name} title={name}>
-              <img src={image} alt={name} />
-            </span>
-          )
-        )}
+    <section className={styles.trusted}>
+      <div className="container">
+        <p className={styles.trustedLead}>
+          Used in diagnostic laboratories, research centres and public
+          health programmes worldwide
+        </p>
+        <div className="trusted-logos">
+          {TRUSTED_BY.map(({ name, image, url }) =>
+            url ? (
+              <a
+                key={name}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={name}
+              >
+                <img src={image} alt={name} />
+              </a>
+            ) : (
+              <span key={name} title={name}>
+                <img src={image} alt={name} />
+              </span>
+            )
+          )}
+        </div>
       </div>
-    </Section>
+    </section>
   );
 }
 
 function CtaBanner() {
   return (
-    <div className="cta-banner">
-      <h2 className="cta-banner__title">
-        Start using SENAITE
-      </h2>
-      <p className="cta-banner__subtitle">
-        Self-install from PyPI or work with a professional service
-        provider who knows the codebase inside out.
-      </p>
-      <div className="cta-banner__buttons">
-        <Link
-          className="button button--primary button--lg"
-          to="/docs/installation"
-        >
-          Installation Guide
-        </Link>
-        <Link
-          className="button button--outline button--secondary button--lg"
-          to="/enterprise"
-        >
-          Professional Services
-        </Link>
+    <section className={styles.cta}>
+      <div className={clsx("container", styles.ctaInner)}>
+        <div>
+          <h2 className={styles.ctaTitle}>Start with SENAITE</h2>
+          <p className={styles.ctaText}>
+            Install it yourself with Docker or from PyPI, or work with a
+            service provider who knows the code base.
+          </p>
+        </div>
+        <div className={styles.heroButtons}>
+          <Link
+            className="button button--primary button--lg"
+            to="/docs/installation"
+          >
+            Installation guide
+          </Link>
+          <Link
+            className="button button--outline button--lg"
+            to="/enterprise"
+          >
+            Service providers
+          </Link>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -357,9 +385,10 @@ export default function Home() {
     >
       <HeroBanner />
       <main>
-        <PerformanceSection />
-        <ControlSection />
-        <TechnologySection />
+        <Lifecycle />
+        {TOPICS.map((topic, index) => (
+          <Topic key={topic.title} reverse={index % 2 === 1} {...topic} />
+        ))}
         <OpenSourceSection />
         <TrustedBySection />
         <CtaBanner />

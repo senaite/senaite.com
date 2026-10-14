@@ -1,3 +1,9 @@
+@import "@fontsource/ibm-plex-sans/400.css";
+@import "@fontsource/ibm-plex-sans/500.css";
+@import "@fontsource/ibm-plex-sans/600.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+
 /**
  * SENAITE brand colors and global overrides for Docusaurus.
  *
@@ -32,13 +38,20 @@
   --ifm-navbar-link-hover-color: var(--senaite-gold);
   --ifm-navbar-shadow: 0 1px 0 0 var(--senaite-border);
 
-  /* Global type scale */
+  /* Type: IBM Plex, self-hosted (no third-party font requests) */
+  --ifm-font-family-base: "IBM Plex Sans", system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  --ifm-heading-font-family: var(--ifm-font-family-base);
+  --ifm-font-family-monospace: "IBM Plex Mono", ui-monospace,
+    "SFMono-Regular", Menlo, monospace;
   --ifm-font-size-base: 17px;
-  --ifm-line-height-base: 1.7;
-  --ifm-heading-font-weight: 300;
-  --ifm-h1-font-size: 3rem;
-  --ifm-h2-font-size: 2.4rem;
-  --ifm-h3-font-size: 1.25rem;
+  --ifm-line-height-base: 1.65;
+  --ifm-heading-font-weight: 600;
+  --ifm-h1-font-size: 2.75rem;
+  --ifm-h2-font-size: 2rem;
+  --ifm-h3-font-size: 1.2rem;
+  --ifm-heading-line-height: 1.2;
+
 }
 
 [data-theme="dark"] {
@@ -93,7 +106,7 @@
 }
 
 /* -------------------------------------------------------
-   Buttons — outline style globally via Infima CSS props
+   Buttons: primary is filled, secondary is outlined
 ------------------------------------------------------- */
 .button {
   border-radius: 3px;
@@ -102,29 +115,39 @@
   transition: background-color 0.15s, color 0.15s, border-color 0.15s;
 }
 
+/* Darker gold than the brand accent, so white text keeps a 4.5:1
+   contrast. */
 .button--primary {
-  --ifm-button-background-color: transparent;
-  --ifm-button-color: var(--senaite-gold);
-  --ifm-button-border-color: var(--senaite-gold);
+  --ifm-button-background-color: #7e6840;
+  --ifm-button-border-color: #7e6840;
+  --ifm-button-color: #fff;
 }
 
 .button--primary:hover,
 .button--primary:focus {
-  --ifm-button-background-color: rgba(146, 127, 84, 0.1);
-  --ifm-button-color: var(--senaite-gold);
+  --ifm-button-background-color: #685534;
+  --ifm-button-border-color: #685534;
+  --ifm-button-color: #fff;
   text-decoration: none;
 }
 
 [data-theme="dark"] .button--primary {
-  --ifm-button-color: var(--ifm-color-primary);
+  --ifm-button-background-color: var(--ifm-color-primary);
   --ifm-button-border-color: var(--ifm-color-primary);
+  --ifm-button-color: #141a1a;
 }
 
 [data-theme="dark"] .button--primary:hover,
 [data-theme="dark"] .button--primary:focus {
-  --ifm-button-background-color: var(--ifm-color-primary);
-  --ifm-button-color: #fff;
+  --ifm-button-background-color: var(--ifm-color-primary-lighter);
+  --ifm-button-border-color: var(--ifm-color-primary-lighter);
+  --ifm-button-color: #141a1a;
   text-decoration: none;
+}
+
+.button--lg {
+  --ifm-button-padding-horizontal: 1.5rem;
+  font-size: 1.05rem;
 }
 
 .button--secondary {
@@ -174,26 +197,16 @@
 }
 
 .senaite-section__header {
-  text-align: center;
-  margin-bottom: 3.5rem;
+  max-width: 44rem;
+  margin-bottom: 3rem;
 }
 
 .senaite-section__title {
-  font-size: 2.6rem;
-  font-weight: 300;
+  font-size: 2rem;
+  font-weight: 600;
   color: var(--senaite-text);
   margin-bottom: 0;
   letter-spacing: -0.02em;
-}
-
-/* Gold rule under every section title */
-.senaite-section__title::after {
-  content: "";
-  display: block;
-  width: 40px;
-  height: 2px;
-  background: var(--senaite-gold);
-  margin: 1rem auto 0;
 }
 
 [data-theme="dark"] .senaite-section__title {
@@ -204,10 +217,8 @@
   font-size: 1.2rem;
   font-weight: 400;
   color: var(--senaite-muted);
-  margin-top: 1.25rem;
-  max-width: 640px;
-  margin-left: auto;
-  margin-right: auto;
+  margin-top: 0.75rem;
+  margin-bottom: 0;
   line-height: 1.6;
 }
 
@@ -295,7 +306,7 @@
 ------------------------------------------------------- */
 .provider-grid {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 2.5rem;
   flex-wrap: wrap;
   margin: 1.5rem 0;
@@ -405,7 +416,7 @@
 .trusted-logos {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 3rem;
   margin-top: 2rem;
@@ -438,32 +449,57 @@
    CTA banner
 ------------------------------------------------------- */
 .cta-banner {
-  background: var(--senaite-surface);
-  border-top: 1px solid var(--senaite-border);
-  text-align: center;
-  padding: 5rem 1rem;
+  /* Infima colours outlined buttons with the base font colour */
+  --ifm-font-color-base: #fff;
+  background: var(--senaite-dark);
+  color: #e6ecec;
+  padding: 4rem 0;
+}
+
+[data-theme="dark"] .cta-banner {
+  background: #141a1a;
 }
 
 .cta-banner__title {
-  font-size: 2.2rem;
-  font-weight: 300;
-  letter-spacing: -0.02em;
-  margin-bottom: 0.75rem;
-  color: var(--senaite-text);
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #fff;
 }
 
 .cta-banner__subtitle {
-  font-size: 1.1rem;
-  color: var(--senaite-muted);
-  margin-bottom: 2rem;
-  max-width: 540px;
-  margin-left: auto;
-  margin-right: auto;
+  font-size: 1.05rem;
+  color: #c8d2d2;
+  margin-bottom: 1.75rem;
+  max-width: 36rem;
+}
+
+.cta-banner .button.button--outline,
+.cta-banner .button.button--secondary {
+  --ifm-button-color: #fff;
+  --ifm-button-border-color: rgba(255, 255, 255, 0.5);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .cta-banner__buttons {
   display: flex;
-  gap: 1rem;
-  justify-content: center;
+  gap: 0.75rem;
+  justify-content: flex-start;
   flex-wrap: wrap;
+}
+
+/* -------------------------------------------------------
+   Footer: brand slate instead of the theme's default grey
+------------------------------------------------------- */
+.footer--dark {
+  --ifm-footer-background-color: #1f2727;
+  --ifm-footer-link-hover-color: var(--ifm-color-primary-lightest);
+}
+
+.cta-banner .button.button--outline:hover,
+.cta-banner .button.button--secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #fff;
+  color: #fff;
 }
