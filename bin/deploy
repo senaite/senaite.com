@@ -73,6 +73,9 @@ echo
 # --- Build -------------------------------------------------
 echo "==> building"
 npm ci
+# A running bin/dev shares .docusaurus/ with the build, and a stale
+# cache there makes the docs pages fail to render. Start clean.
+npm run clear
 npm run build
 
 if [[ ! -f build/index.html ]]; then
