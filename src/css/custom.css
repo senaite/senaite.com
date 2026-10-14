@@ -31,6 +31,8 @@
   --senaite-accent: var(--ifm-color-primary);
   --senaite-surface: #f8f8f8;
   --senaite-border: #e8e8e8;
+  /* Connecting lines, darker than borders: they carry meaning */
+  --senaite-line: #aab4b4;
   --senaite-text: #1c2424;
   --senaite-muted: #666;
 
@@ -48,7 +50,7 @@
     "SFMono-Regular", Menlo, monospace;
   --ifm-font-size-base: 17px;
   --ifm-line-height-base: 1.65;
-  --ifm-heading-font-weight: 600;
+  --ifm-heading-font-weight: 500;
   --ifm-h1-font-size: 2.75rem;
   --ifm-h2-font-size: 2rem;
   --ifm-h3-font-size: 1.2rem;
@@ -69,6 +71,7 @@
   /* SENAITE dark-mode brand tokens */
   --senaite-surface: #1e2626;
   --senaite-border: #2e3c3c;
+  --senaite-line: #566868;
   --senaite-muted: #8a9a9a;
   --senaite-text: #edf2f2;
 
@@ -203,7 +206,7 @@
 
 .senaite-section__title {
   font-size: 2rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--senaite-text);
   margin-bottom: 0;
   letter-spacing: -0.02em;

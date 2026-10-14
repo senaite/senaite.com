@@ -262,8 +262,8 @@ function HeroBanner() {
   );
 }
 
-// The step marker is the hexagon of the SENAITE logo, outlined in
-// the colour of the state.
+// The step marker is the hexagon of the SENAITE logo. The last
+// state is filled: that is where every sample is headed.
 function StepMarker({ number }) {
   return (
     <span className={styles.marker} aria-hidden="true">
@@ -284,10 +284,9 @@ function Lifecycle() {
         </h2>
         <ol className={styles.lifecycleTrack}>
           {LIFECYCLE.map(({ id, label, text }, index) => (
-            <li key={id} className={styles.state} data-state={id}>
+            <li key={id} className={styles.state}>
               <StepMarker number={index + 1} />
               <span className={styles.stateLabel}>{label}</span>
-              <code className={styles.stateId}>{id}</code>
               <p className={styles.stateText}>{text}</p>
             </li>
           ))}
@@ -409,7 +408,7 @@ function CtaBanner() {
             Installation guide
           </Link>
           <Link
-            className="button button--outline button--lg"
+            className="button button--secondary button--lg"
             to="/enterprise"
           >
             Service providers

@@ -142,8 +142,8 @@ const config = {
       },
 
       prism: {
-        theme: require("prism-react-renderer").themes.github,
-        darkTheme: require("prism-react-renderer").themes.dracula,
+        theme: require("./src/prism/themes").light,
+        darkTheme: require("./src/prism/themes").dark,
         additionalLanguages: ["ini", "bash", "shell-session"],
       },
     }),
