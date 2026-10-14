@@ -132,6 +132,11 @@
   line-height: 1;
 }
 
+/* The line ends where the sample does */
+.state:last-child {
+  border-color: transparent;
+}
+
 .state:last-child .marker polygon {
   fill: currentColor;
 }
