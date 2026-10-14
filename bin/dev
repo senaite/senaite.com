@@ -1,0 +1,129 @@
+#!/usr/bin/env bash
+# Run senaite.com locally with live reload.
+#
+# Usage:
+#   bin/dev              Start the Docusaurus dev server on :3001
+#   bin/dev --kill       Kill a stale dev server on the port without
+#                        asking first
+#   PORT=3002 bin/dev    Override the port
+#
+# Env:
+#   BIN_DEV_KILL=1       Same as --kill, for scripts.
+#
+# The dev server renders from docs/ directly and reloads on save.
+# It does not run the production pipeline, so a page that works
+# here can still fail `npm run build`. Broken links only show up as
+# warnings in the build output; read them before deploying.
+
+set -euo pipefail
+
+DIR="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$DIR"
+
+KILL_STALE="${BIN_DEV_KILL:-0}"
+for arg in "$@"; do
+  case "$arg" in
+    --kill) KILL_STALE=1 ;;
+    -h|--help)
+      awk '/^#!/ {next} /^#/ {sub(/^# ?/, ""); print; next}
+           {exit}' "$0"
+      exit 0
+      ;;
+    *)
+      echo "Unknown flag: $arg" >&2
+      exit 2
+      ;;
+  esac
+done
+
+# -- Dependencies --
+
+if [ ! -d node_modules ]; then
+  echo "Installing dependencies..."
+  npm install
+fi
+
+PORT="${PORT:-3001}"
+export PORT
+
+# Detect a stale dev server on $PORT, which is what is left when a
+# previous bin/dev was backgrounded, lost its parent or crashed
+# without releasing the port. Auto-kill only when the holder is
+# recognisably one of ours; never kill an unknown process.
+#
+# Every lookup here asks for listening sockets only. A plain
+# "lsof -ti :3001" also matches a browser's own closed client
+# sockets whose peer happened to be port 3001, so a browser tab
+# left open on the dev server was enough to make this refuse to
+# start.
+preflight_port() {
+  local pids
+  pids=$(lsof -ti -sTCP:LISTEN :"$PORT" 2>/dev/null || true)
+  [ -z "$pids" ] && return 0
+
+  local own=""
+  for pid in $pids; do
+    local cmd
+    cmd=$(ps -p "$pid" -o command= 2>/dev/null || true)
+    if echo "$cmd" | grep -qE "(docusaurus|node).*(docusaurus|start)"; then
+      own="$own $pid"
+    fi
+  done
+  own=$(echo "$own" | xargs)
+
+  if [ -z "$own" ]; then
+    echo "Port $PORT is in use by an unknown process:" >&2
+    lsof -i -sTCP:LISTEN :"$PORT" 2>/dev/null | head -3 >&2
+    echo "Refusing to touch it. Free the port manually," \
+         "or run with a different PORT=" >&2
+    exit 1
+  fi
+
+  echo "Port $PORT is held by a stale dev server (PID(s): $own)." >&2
+
+  if [ "$KILL_STALE" = "1" ]; then
+    echo "  --kill / BIN_DEV_KILL set, killing..." >&2
+  elif [ -t 0 ]; then
+    printf "  Kill it and continue? [Y/n] " >&2
+    local reply
+    read -r reply
+    case "$reply" in
+      ""|y|Y|yes|YES) ;;
+      *) echo "Aborted." >&2; exit 1 ;;
+    esac
+  else
+    echo "  Non-interactive shell, refusing to kill." >&2
+    echo "  Re-run with --kill or set BIN_DEV_KILL=1." >&2
+    exit 1
+  fi
+
+  # shellcheck disable=SC2086
+  kill $own 2>/dev/null || true
+  sleep 1
+
+  local survivors
+  survivors=$(lsof -ti -sTCP:LISTEN :"$PORT" 2>/dev/null || true)
+  if [ -n "$survivors" ]; then
+    echo "  Force-killing $survivors..." >&2
+    # shellcheck disable=SC2086
+    kill -9 $survivors 2>/dev/null || true
+    sleep 1
+  fi
+
+  if [ -n "$(lsof -ti -sTCP:LISTEN :"$PORT" 2>/dev/null || true)" ]; then
+    echo "Port $PORT still busy after kill attempts." >&2
+    exit 1
+  fi
+}
+
+preflight_port
+
+echo
+echo "senaite.com (local)"
+echo "  Site:        http://localhost:$PORT/"
+echo "  Quickstart:  http://localhost:$PORT/docs/quickstart"
+echo
+
+# --no-open: a browser tab stealing focus on every restart is
+# noise. Port 3001 by default, so it runs next to the academy (3000).
+exec npx docusaurus start --port "$PORT" --no-open
